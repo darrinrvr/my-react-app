@@ -119,7 +119,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
       if (!contactRes.ok) throw new Error(await contactRes.text());
       const contact = await contactRes.json();
-      alert(contact)
+      alert(JSON.stringify(contact))
 
       // 2️⃣ Attach uploaded files
       for (const file of uploadedFiles) {
