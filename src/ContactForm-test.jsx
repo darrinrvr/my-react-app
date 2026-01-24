@@ -1,234 +1,191 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
-const SIGNATURE = "9df5b0c8-5375-47e4-8e50-87e426132c9a";
+const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-export default function ContactForm({ token, onCompleted, onCancel }) {
+export default function Contact() {
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
-  const options=["EMPLOYEE","PERSON","COMPANY","DIA","SPECIAL"];
+
   const [form, setForm] = useState({
     first_name: "",
     middle_name: "",
     last_name: "",
     email_address: "",
-    phone: "868",
+    phone: "",
     address_line_1: "",
     address_line_2: "",
     town_city: "",
-    dp_number:"",
-    contact_type:""
   });
 
+  const [attachments, setAttachments] = useState([]);
+
+  /* -------------------- CRM HANDSHAKE -------------------- */
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.origin !== CRM_ORIGIN) return;
+      if (typeof event.data !== "string") return;
+
+      try {
+        const data = JSON.parse(event.data);
+        if (data.access_token) {
+          setToken(data.access_token);
+        }
+      } catch {}
+    };
+
+    window.addEventListener("message", handler);
+
+    window.top?.postMessage(
+      JSON.stringify({ signature: SIGNATURE, message: "AUTH" }),
+      CRM_ORIGIN
+    );
+
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
+  /* -------------------- FORM -------------------- */
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  /* -------------------- FILE DROP -------------------- */
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+
+    // NOTE: these files MUST already be accessible via URL
+    // For now we fake URLs (replace with real upload later)
+    const mapped = files.map((file) => ({
+      file_id: crypto.randomUUID(),
+      url: URL.createObjectURL(file), // ⚠️ replace with real hosted URL
+      description: file.name,
+    }));
+
+    setAttachments((prev) => [...prev, ...mapped]);
+  };
+
+  /* -------------------- SUBMIT -------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!token) return alert("Waiting for CRM authorization");
 
-    // if (!token) {
-    //   alert("Waiting for CRM authorization...");
-    //   return;
-    // }
-
-    // setLoading(true);
-
-    // === Fixed payload for CRM ===
-    const payload = {
-      contact_type: "PERSON",
-      
-      first_name: form.first_name.toUpperCase(),
-      middle_name: form.middle_name.toUpperCase() || "",
-      last_name: form.last_name.toUpperCase(),
-      
-      email_address: form.email_address,
-      phones:[
-        {
-           is_primary: true,
-          country_code: "TTO",
-          number: form.phone,
-         
-          phone_type: "MOBILE",
-        }],
-      
-      addresses: 
-        [{
-          address_type: "HOME",          // REQUIRED
-          name:"",
-          is_primary: true,
-          address_line_1: form.address_line_1.toUpperCase(),
-          address_line_2: form.address_line_2.toUpperCase() || "",
-           state_province_county:"",
-          town_city: form.town_city.toUpperCase(),
-          postal_code:"",
-          country_code: "TTO",           // REQUIRED
-          lat:"",
-          lon:"",
-          google_place_id:""
-
-// "type": "ALTERNATIVE",
-//         "name": "Engomi office",
-//         "is_primary": true,
-//         "address_line_1": "21 Elia Papakyriakou",
-//         "address_line_2": "7 Stars Tower",
-//         "state_province_county": "Egkomi",
-//         "town_city": "Nicosia",
-//         "postal_code": "2415",
-//         "country_code": "CYP",
-//         "lat": 35.157115,
-//         "lon": 33.313719,
-//         "google_place_id": "ChIJrTLr-GyuE
-
-        }],
-         custom_fields:[
-        {
-          key:"dp_number",
-          value:form.dp_number
-        },
-        {
-          key:"contact_type",
-          value:form.contact_type
-        }
-      ], 
-      
-    };
-    alert(JSON.stringify(payload));
-    console.log("Submitting payload to CRM:", payload);
-    console.log("Token:", token);
+    setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://sandbox.crm.com/backoffice/v1/contacts",
+      /* ---------- CREATE CONTACT ---------- */
+      const contactPayload = {
+        contact_type: "PERSON",
+        first_name: form.first_name,
+        middle_name: form.middle_name,
+        last_name: form.last_name,
+        email_address: form.email_address,
+        phones: [
+          {
+            is_primary: true,
+            country_code: "USA",
+            number: form.phone,
+            phone_type: "MOBILE",
+          },
+        ],
+        addresses: [
+          {
+            address_type: "HOME",
+            is_primary: true,
+            address_line_1: form.address_line_1,
+            address_line_2: form.address_line_2,
+            town_city: form.town_city,
+            country_code: "USA",
+          },
+        ],
+      };
+
+      const contactRes = await fetch(
+        `${CRM_ORIGIN}/backoffice/v1/contacts`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(contactPayload),
         }
       );
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("CRM API error:", text);
-        alert("Failed to create contact: " + text);
-        return;
+      if (!contactRes.ok) {
+        const err = await contactRes.text();
+        throw new Error(err);
       }
 
-      const data = await res.json();
-      console.log("CRM contact created:", data);
+      const contact = await contactRes.json();
+      const contactId = contact.id;
 
-      
+      /* ---------- ATTACH FILES ---------- */
+      for (const file of attachments) {
+        await fetch(
+          `${CRM_ORIGIN}/backoffice/v1/contacts/${contactId}/files`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              file_id: file.file_id,
+              url: file.url,
+              description: file.description,
+            }),
+          }
+        );
+      }
 
-      // Notify CRM iframe that we're done
+      /* ---------- DONE ---------- */
       window.top.postMessage(
         JSON.stringify({ signature: SIGNATURE, message: "COMPLETED" }),
         CRM_ORIGIN
       );
-
-      onCompleted();
     } catch (err) {
-      console.error("Fetch error:", err);
-      alert("Failed to create contact: " + err.message);
+      console.error(err);
+      alert("Failed to create contact or attach files");
     } finally {
       setLoading(false);
     }
   };
 
+  /* -------------------- UI -------------------- */
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-     <div>
-        <label>FIRST NAME</label>
-      <input
-        name="first_name"
-        placeholder="First Name"
-        value={form.first_name}
-        onChange={handleChange}
-        required
-      />
-      </div>
-      <div>
-      <label>MIDDLE NAME</label>
-      <input
-        name="middle_name"
-        placeholder="Middle Name"
-        value={form.middle_name}
-        onChange={handleChange}
-      />
-      </div>
-      <input
-        name="last_name"
-        placeholder="Last Name"
-        value={form.last_name}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="email"
-        name="email_address"
-        placeholder="Email"
-        value={form.email_address}
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="phone"
-        placeholder="Phone"
-        value={form.phone}
-        onChange={handleChange}
-        required
-      />
-      <input
-        name="address_line_1"
-        placeholder="Address Line 1"
-        value={form.address_line_1}
-        onChange={handleChange}
-        required
-      />
+    <form onSubmit={handleSubmit}>
+      <h3>Create Contact</h3>
 
+      <input name="first_name" placeholder="First Name" onChange={handleChange} required />
+      <input name="middle_name" placeholder="Middle Name" onChange={handleChange} />
+      <input name="last_name" placeholder="Last Name" onChange={handleChange} required />
+      <input name="email_address" placeholder="Email" onChange={handleChange} required />
+      <input name="phone" placeholder="Phone" onChange={handleChange} required />
+      <input name="address_line_1" placeholder="Address Line 1" onChange={handleChange} required />
+      <input name="address_line_2" placeholder="Address Line 2" onChange={handleChange} />
+      <input name="town_city" placeholder="City" onChange={handleChange} required />
 
-      <input
-        name="address_line_2"
-        placeholder="Address Line 2"
-        value={form.address_line_2}
-        onChange={handleChange}
-      />
-      <input
-        name="town_city"
-        placeholder="City"
-        value={form.town_city}
-        onChange={handleChange}
-        required
-      />
-        <input
-        name="dp_number"
-        placeholder="DP / ID / PASSPORT"
-        value={form.dp_number}
-        onChange={handleChange}
-        required
-      />
-      <select id="contact_type" name="contact_type" value={form.contact_type} onChange={handleChange}>
-        <option value="select">Select</option>
-        {options.map((fruit,index) => (
-          <option key={index} value={fruit}>
-            {fruit}
-          </option>
+      <div
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()}
+        style={{
+          marginTop: 20,
+          padding: 20,
+          border: "2px dashed #aaa",
+        }}
+      >
+        Drag & drop attachments here
+      </div>
+
+      <ul>
+        {attachments.map((f) => (
+          <li key={f.file_id}>{f.description}</li>
         ))}
-      </select>
-       <h1> chose {form.contact_type}</h1>
-      <div style={{ marginTop: "10px" }}>
-        <button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Submit"}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          style={{ marginLeft: "10px" }}
-          disabled={loading}
-        >
-          Cancel
-        </button>
-      </div>
+      </ul>
+
+      <button type="submit" disabled={loading}>
+        {loading ? "Saving..." : "Submit"}
+      </button>
     </form>
   );
 }
