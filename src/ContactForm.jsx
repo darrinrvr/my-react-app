@@ -124,7 +124,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
       // 2️⃣ Attach uploaded files
       for (const file of uploadedFiles) {
         await fetch(
-          `https://sandbox.crm.com/backoffice/v1/contacts/${contact._id}/files`,
+          `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
           {
             method: "POST",
             headers: {
