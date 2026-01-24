@@ -131,12 +131,14 @@ export default function Contact({ token, onCompleted, onCancel }) {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(  { file_id:contact.id,
+            body: JSON.stringify({file_id:crypto.randomUUID(),
               url: file.url,
-              description: file.description,}),
+              description: file.description}),
           }
         );
+         alert(JSON.stringify(file))
       }
+      
 
       // 3️⃣ Notify CRM
       window.top.postMessage(
