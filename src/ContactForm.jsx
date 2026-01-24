@@ -119,18 +119,19 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
       if (!contactRes.ok) throw new Error(await contactRes.text());
       const contact = await contactRes.json();
+      alert(contact)
 
       // 2️⃣ Attach uploaded files
       for (const file of uploadedFiles) {
         await fetch(
-          `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+          `https://sandbox.crm.com/backoffice/v1/contacts/${contact._id}/files`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(  { file_id:contact._id,
+            body: JSON.stringify(  { file_id:contact.id,
               url: file.url,
               description: file.description,}),
           }
