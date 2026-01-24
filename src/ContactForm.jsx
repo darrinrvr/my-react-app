@@ -42,33 +42,33 @@ export default function Contact({ token, onCompleted, onCancel }) {
   // FILE UPLOAD (STUB)
   // Replace this with your backend
   // ----------------------------
-  const uploadFiles = async (files) => {
-    setUploading(true);
+  // const uploadFiles = async (files) => {
+  //   setUploading(true);
 
-    for (const file of files) {
-      try {
-        // 🔁 Replace this call
-        const uploaded = await fakeUpload(file);
+  //   for (const file of files) {
+  //     try {
+  //       // 🔁 Replace this call
+  //       const uploaded = await fakeUpload(file);
 
-        setUploadedFiles((prev) => [...prev, uploaded]);
-      } catch (err) {
-        console.error("Upload failed:", err);
-      }
-    }
+  //       setUploadedFiles((prev) => [...prev, uploaded]);
+  //     } catch (err) {
+  //       console.error("Upload failed:", err);
+  //     }
+  //   }
 
-    setUploading(false);
-  };
+  //   setUploading(false);
+  // };
 
-  // 🔥 MOCK uploader — replace later
-  const fakeUpload = async (file) => {
-    await new Promise((r) => setTimeout(r, 500));
+  // // 🔥 MOCK uploader — replace later
+  // const fakeUpload = async (file) => {
+  //   await new Promise((r) => setTimeout(r, 500));
 
-    return {
-      file_id: crypto.randomUUID(),
-      url: `https://files.example.com/${file.name}`,
-      description: file.name,
-    };
-  };
+  //   return {
+  //     file_id: crypto.randomUUID(),
+  //     url: `https://files.example.com/${file.name}`,
+  //     description: file.name,
+  //   };
+  // };
 
   // ----------------------------
   // SUBMIT FLOW
