@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-export default function Contact({ token, onCompleted, onCancel }) {
+export default function Contact() {
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   const [form, setForm] = useState({
     first_name: "",
@@ -18,61 +18,53 @@ export default function Contact({ token, onCompleted, onCancel }) {
     town_city: "",
   });
 
-  // ✅ Files AFTER upload
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [attachments, setAttachments] = useState([]);
 
+  /* -------------------- CRM HANDSHAKE -------------------- */
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.origin !== CRM_ORIGIN) return;
+      if (typeof event.data !== "string") return;
+
+      try {
+        const data = JSON.parse(event.data);
+        if (data.access_token) {
+          setToken(data.access_token);
+        }
+      } catch {}
+    };
+
+    window.addEventListener("message", handler);
+
+    window.top?.postMessage(
+      JSON.stringify({ signature: SIGNATURE, message: "AUTH" }),
+      CRM_ORIGIN
+    );
+
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
+  /* -------------------- FORM -------------------- */
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  // ----------------------------
-  // FILE DROP / PICKER
-  // ----------------------------
-  const handleFileDrop = async (e) => {
+  /* -------------------- FILE DROP -------------------- */
+  const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    await uploadFiles(files);
-  };
 
-  const handleFilePick = async (e) => {
-    const files = Array.from(e.target.files);
-    await uploadFiles(files);
-  };
-
-  // ----------------------------
-  // FILE UPLOAD (STUB)
-  // Replace this with your backend
-  // ----------------------------
-  const uploadFiles = async (files) => {
-    setUploading(true);
-
-    for (const file of files) {
-      try {
-        // 🔁 Replace this call
-        const uploaded = await fakeUpload(file);
-
-        setUploadedFiles((prev) => [...prev, uploaded]);
-      } catch (err) {
-        console.error("Upload failed:", err);
-      }
-    }
-
-    setUploading(false);
-  };
-
-  // 🔥 MOCK uploader — replace later
-  const fakeUpload = async (file) => {
-    await new Promise((r) => setTimeout(r, 500));
-
-    return {
+    // NOTE: these files MUST already be accessible via URL
+    // For now we fake URLs (replace with real upload later)
+    const mapped = files.map((file) => ({
       file_id: crypto.randomUUID(),
-      url: `https://files.example.com/${file.name}`,
+      url: URL.createObjectURL(file), // ⚠️ replace with real hosted URL
       description: file.name,
-    };
+    }));
+
+    setAttachments((prev) => [...prev, ...mapped]);
   };
 
-  // ----------------------------
-  // SUBMIT FLOW
-  // ----------------------------
+  /* -------------------- SUBMIT -------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) return alert("Waiting for CRM authorization");
@@ -80,84 +72,89 @@ export default function Contact({ token, onCompleted, onCancel }) {
     setLoading(true);
 
     try {
-      // 1️⃣ Create contact
+      /* ---------- CREATE CONTACT ---------- */
+      const contactPayload = {
+        contact_type: "PERSON",
+        first_name: form.first_name,
+        middle_name: form.middle_name,
+        last_name: form.last_name,
+        email_address: form.email_address,
+        phones: [
+          {
+            is_primary: true,
+            country_code: "USA",
+            number: form.phone,
+            phone_type: "MOBILE",
+          },
+        ],
+        addresses: [
+          {
+            address_type: "HOME",
+            is_primary: true,
+            address_line_1: form.address_line_1,
+            address_line_2: form.address_line_2,
+            town_city: form.town_city,
+            country_code: "USA",
+          },
+        ],
+      };
+
       const contactRes = await fetch(
-        "https://sandbox.crm.com/backoffice/v1/contacts",
+        `${CRM_ORIGIN}/backoffice/v1/contacts`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            contact_type: "PERSON",
-            first_name: form.first_name,
-            middle_name: form.middle_name,
-            last_name: form.last_name,
-            email_address: form.email_address,
-            phones: [
-              {
-                phone_type: "MOBILE",
-                country_code: "TTO",
-                number: form.phone,
-                is_primary: true,
-              },
-            ],
-            addresses: [
-              {
-                address_type: "HOME",
-                address_line_1: form.address_line_1,
-                address_line_2: form.address_line_2,
-                town_city: form.town_city,
-                country_code: "TTO",
-                is_primary: true,
-              },
-            ],
-          }),
+          body: JSON.stringify(contactPayload),
         }
       );
 
-      if (!contactRes.ok) throw new Error(await contactRes.text());
-      const contact = await contactRes.json();
+      if (!contactRes.ok) {
+        const err = await contactRes.text();
+        throw new Error(err);
+      }
 
-      // 2️⃣ Attach uploaded files
-      for (const file of uploadedFiles) {
+      const contact = await contactRes.json();
+      const contactId = contact.id;
+
+      /* ---------- ATTACH FILES ---------- */
+      for (const file of attachments) {
         await fetch(
-          `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+          `${CRM_ORIGIN}/backoffice/v1/contacts/${contactId}/files`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(file),
+            body: JSON.stringify({
+              file_id: file.file_id,
+              url: file.url,
+              description: file.description,
+            }),
           }
         );
       }
 
-      // 3️⃣ Notify CRM
+      /* ---------- DONE ---------- */
       window.top.postMessage(
         JSON.stringify({ signature: SIGNATURE, message: "COMPLETED" }),
         CRM_ORIGIN
       );
-
-      onCompleted?.();
     } catch (err) {
       console.error(err);
-      alert("Submission failed:\n" + err.message);
+      alert("Failed to create contact or attach files");
     } finally {
       setLoading(false);
     }
   };
 
-  // ----------------------------
-  // RENDER
-  // ----------------------------
+  /* -------------------- UI -------------------- */
   return (
     <form onSubmit={handleSubmit}>
       <h3>Create Contact</h3>
-
-
 
       <input name="first_name" placeholder="First Name" onChange={handleChange} required />
       <input name="middle_name" placeholder="Middle Name" onChange={handleChange} />
@@ -168,36 +165,26 @@ export default function Contact({ token, onCompleted, onCancel }) {
       <input name="address_line_2" placeholder="Address Line 2" onChange={handleChange} />
       <input name="town_city" placeholder="City" onChange={handleChange} required />
 
-      <h4>Attachments</h4>
-
       <div
-        onDrop={handleFileDrop}
+        onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         style={{
-          border: "2px dashed #aaa",
+          marginTop: 20,
           padding: 20,
-          marginBottom: 10,
+          border: "2px dashed #aaa",
         }}
       >
-        Drag & drop files here
+        Drag & drop attachments here
       </div>
 
-      <input type="file" multiple onChange={handleFilePick} />
-
-      {uploading && <p>Uploading files...</p>}
-
       <ul>
-        {uploadedFiles.map((f, i) => (
-          <li key={i}>{f.description}</li>
+        {attachments.map((f) => (
+          <li key={f.file_id}>{f.description}</li>
         ))}
       </ul>
 
-      <button type="submit" disabled={loading || uploading}>
-        {loading ? "Submitting..." : "Submit"}
-      </button>
-
-      <button type="button" onClick={onCancel}>
-        Cancel
+      <button type="submit" disabled={loading}>
+        {loading ? "Saving..." : "Submit"}
       </button>
     </form>
   );
