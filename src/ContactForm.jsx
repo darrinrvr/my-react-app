@@ -130,7 +130,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(  { file_id: file.file_id,
+            body: JSON.stringify(  { file_id:contact._id,
               url: file.url,
               description: file.description,}),
           }
