@@ -21,40 +21,55 @@ export default function Contact({ token, onCompleted, onCancel }) {
   // ✅ Files AFTER upload
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
- const handleChange = (e) =>
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  // ----------------------------
+  // FILE DROP / PICKER
+  // ----------------------------
+  const handleFileDrop = async (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    await uploadFiles(files);
+  };
 
   const handleFilePick = async (e) => {
     const files = Array.from(e.target.files);
     await uploadFiles(files);
   };
 
+  // ----------------------------
+  // FILE UPLOAD (STUB)
+  // Replace this with your backend
+  // ----------------------------
   const uploadFiles = async (files) => {
     setUploading(true);
+
     for (const file of files) {
       try {
-        // ✅ Upload file to file.io to get a public URL
-        const publicUrl = await uploadToFileIO(file);
-        setUploadedFiles((prev) => [
-          ...prev,
-          { file_id: crypto.randomUUID(), url: publicUrl, description: file.name },
-        ]);
+        // 🔁 Replace this call
+        const uploaded = await fakeUpload(file);
+
+        setUploadedFiles((prev) => [...prev, uploaded]);
       } catch (err) {
-        console.error("File upload failed:", err);
+        console.error("Upload failed:", err);
       }
     }
+
     setUploading(false);
   };
 
-  const uploadToFileIO = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
+  // 🔥 MOCK uploader — replace later
+  const fakeUpload = async (file) => {
+    await new Promise((r) => setTimeout(r, 500));
 
-    const res = await fetch("https://file.io", { method: "POST", body: formData });
-    const data = await res.json();
-    if (!data.success) throw new Error("File upload failed");
-    return data.link; // public URL
+    return {
+      file_id: crypto.randomUUID(),
+      url: file.url,
+      description: file.name,
+    };
   };
+
   // ----------------------------
   // SUBMIT FLOW
   // ----------------------------
@@ -117,7 +132,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({file_id:crypto.randomUUID(),
-              url: file,
+              url: file.url,
               description: file.description}),
           }
         );
