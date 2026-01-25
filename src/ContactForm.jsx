@@ -18,57 +18,23 @@ export default function Contact({ token, onCompleted, onCancel }) {
     town_city: "",
   });
 
-  // ✅ Files AFTER upload
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  // ✅ Raw files (not uploaded yet)
+  const [files, setFiles] = useState([]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   // ----------------------------
-  // FILE DROP / PICKER
+  // FILE PICK / DROP
   // ----------------------------
-  const handleFileDrop = async (e) => {
+  const handleFileDrop = (e) => {
     e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    await uploadFiles(files);
+    setFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
   };
 
-  const handleFilePick = async (e) => {
-    const files = Array.from(e.target.files);
-    alert(JSON.stringify(files))
-    await uploadFiles(files);
-  };
-
-  // ----------------------------
-  // FILE UPLOAD (STUB)
-  // Replace this with your backend
-  // ----------------------------
-  const uploadFiles = async (files) => {
-    setUploading(true);
-
-    for (const file of files) {
-      try {
-        // 🔁 Replace this call
-        const uploaded = await fakeUpload(file);
-
-        setUploadedFiles((prev) => [...prev, uploaded]);
-      } catch (err) {
-        console.error("Upload failed:", err);
-      }
-    }
-
-    setUploading(false);
-  };
-
-  // 🔥 MOCK uploader — replace later
-  const fakeUpload = async (file) => {
-    await new Promise((r) => setTimeout(r, 500));
-    alert(JSON.stringify(file))
-    return {
-      file_id: crypto.randomUUID(),
-      url: file.url,
-      description: file.name,
-    };
+  const handleFilePick = (e) => {
+    setFiles((prev) => [...prev, ...Array.from(e.target.files)]);
+    e.target.value = "";
   };
 
   // ----------------------------
@@ -81,7 +47,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
     setLoading(true);
 
     try {
-      // 1️⃣ Create contact
+      // 1️⃣ Create contact (JSON)
       const contactRes = await fetch(
         "https://sandbox.crm.com/backoffice/v1/contacts",
         {
@@ -120,26 +86,35 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
       if (!contactRes.ok) throw new Error(await contactRes.text());
       const contact = await contactRes.json();
-      alert(JSON.stringify(contact))
 
-      // 2️⃣ Attach uploaded files
-      for (const file of uploadedFiles) {
-        await fetch(
-          `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({file_id:crypto.randomUUID(),
-              url: file.url,
-              description: 'test'}),
+      // 2️⃣ Upload files directly to CRM (FormData)
+      if (files.length > 0) {
+        setUploading(true);
+
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append("file_id",crypto.randomUUID())
+          formData.append("url", file); // 👈 most CRMs expect "file"
+          formData.append("description", file.name);
+
+          const fileRes = await fetch(
+            `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`, // ❗ NO Content-Type
+              },
+              body: formData,
+            }
+          );
+
+          if (!fileRes.ok) {
+            throw new Error(await fileRes.text());
           }
-        );
-         alert(JSON.stringify(file))
+        }
+
+        setUploading(false);
       }
-      
 
       // 3️⃣ Notify CRM
       window.top.postMessage(
@@ -152,6 +127,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
       console.error(err);
       alert("Submission failed:\n" + err.message);
     } finally {
+      setUploading(false);
       setLoading(false);
     }
   };
@@ -162,8 +138,6 @@ export default function Contact({ token, onCompleted, onCancel }) {
   return (
     <form onSubmit={handleSubmit}>
       <h3>Create Contact</h3>
-
-
 
       <input name="first_name" placeholder="First Name" onChange={handleChange} required />
       <input name="middle_name" placeholder="Middle Name" onChange={handleChange} />
@@ -190,13 +164,13 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
       <input type="file" multiple onChange={handleFilePick} />
 
-      {uploading && <p>Uploading files...</p>}
-
       <ul>
-        {uploadedFiles.map((f, i) => (
-          <li key={i}>{JSON.stringify(f)}</li>
+        {files.map((f, i) => (
+          <li key={i}>{f.name}</li>
         ))}
       </ul>
+
+      {(loading || uploading) && <p>Processing...</p>}
 
       <button type="submit" disabled={loading || uploading}>
         {loading ? "Submitting..." : "Submit"}
