@@ -25,9 +25,10 @@ export default function Attachments({ token, contactId, onCompleted }) {
     try {
       for (const file of files) {
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file_id",crypto.randomUUID)
+        formData.append("url", file);
         formData.append("description", file.name);
-
+ alert(JSON.stringify(formData));
         const res = await fetch(
           `https://sandbox.crm.com/backoffice/v1/contacts/${contactId}/files`,
           {
