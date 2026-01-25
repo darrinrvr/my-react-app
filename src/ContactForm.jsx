@@ -98,16 +98,17 @@ export default function Contact({ token, onCompleted, onCancel }) {
           formData.append("description", file.name);
     alert(JSON.stringify(formData))
 
-          const fileRes = await fetch(
-            `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`, // ❗ NO Content-Type
-              },
-              body: formData,
-            }
-          );
+          // const fileRes = await fetch(
+          //   `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+          //   {
+          //     method: "POST",
+          //     headers: {
+          //        "Content-Type": "application/json",
+          //       Authorization: `Bearer ${token}`, 
+          //     },
+          //     body: formData,
+          //   }
+          // );
 
           if (!fileRes.ok) {
             throw new Error(await fileRes.text());
