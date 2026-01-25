@@ -26,7 +26,6 @@ export default function Attachments({ token, contactId, onCompleted }) {
       for (const file of files) {
         const formData = new FormData();
         formData.append("file_id",crypto.randomUUID)
-        formData.append("file", file);
          formData.append("url", file);
         formData.append("description", file.name);
  alert(JSON.stringify(formData));
