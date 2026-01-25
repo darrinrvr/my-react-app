@@ -194,7 +194,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
       <ul>
         {uploadedFiles.map((f, i) => (
-          <li key={i}>{f.description}</li>
+          <li key={i}>{JSON.stringify(f)}</li>
         ))}
       </ul>
 
