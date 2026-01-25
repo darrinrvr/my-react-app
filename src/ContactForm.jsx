@@ -65,7 +65,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
     return {
       file_id: crypto.randomUUID(),
-      url: file.url,
+      url: file,
       description: file.name,
     };
   };
@@ -133,7 +133,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
             },
             body: JSON.stringify({file_id:crypto.randomUUID(),
               url: file.url,
-              description: file.description}),
+              description: 'test'}),
           }
         );
          alert(JSON.stringify(file))
