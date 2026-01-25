@@ -35,6 +35,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
   const handleFilePick = async (e) => {
     const files = Array.from(e.target.files);
+    alert(JSON.stringify(files))
     await uploadFiles(files);
   };
 
@@ -62,7 +63,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
   // 🔥 MOCK uploader — replace later
   const fakeUpload = async (file) => {
     await new Promise((r) => setTimeout(r, 500));
-
+    alert(JSON.stringify(file))
     return {
       file_id: crypto.randomUUID(),
       url: file.url,
