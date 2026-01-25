@@ -96,7 +96,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
           formData.append("file_id",crypto.randomUUID())
           formData.append("url", file); // 👈 most CRMs expect "file"
           formData.append("description", file.name);
-    alert(formData)
+    alert(JSON.stringify(formData))
 
           const fileRes = await fetch(
             `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
