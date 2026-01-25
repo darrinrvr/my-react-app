@@ -56,13 +56,14 @@ export default function App() {
           onCancel={() => setShowForm(false)}
         />
       )}
-         {/* {showAttachment && token && (
+         {showAttachment && token && (
         <Attachments
           token={token}
+          contactId={'cdf338e6-814e-40d4-8c83-6465dc672b75'}
           onCompleted={() => setShowForm(false)}
-          onCancel={() => setShowForm(false)}
+          
         />
-      )} */}
+      )}
 
       {!token && showForm && (
         <div style={{ marginTop: "20px" }}>Waiting for CRM authorization...</div>
