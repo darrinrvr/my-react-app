@@ -48,44 +48,44 @@ export default function Contact({ token, onCompleted, onCancel }) {
 
     try {
       // 1️⃣ Create contact (JSON)
-      // const contactRes = await fetch(
-      //   "https://sandbox.crm.com/backoffice/v1/contacts",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //     body: JSON.stringify({
-      //       contact_type: "PERSON",
-      //       first_name: form.first_name,
-      //       middle_name: form.middle_name,
-      //       last_name: form.last_name,
-      //       email_address: form.email_address,
-      //       phones: [
-      //         {
-      //           phone_type: "MOBILE",
-      //           country_code: "TTO",
-      //           number: form.phone,
-      //           is_primary: true,
-      //         },
-      //       ],
-      //       addresses: [
-      //         {
-      //           address_type: "HOME",
-      //           address_line_1: form.address_line_1,
-      //           address_line_2: form.address_line_2,
-      //           town_city: form.town_city,
-      //           country_code: "TTO",
-      //           is_primary: true,
-      //         },
-      //       ],
-      //     }),
-      //   }
-      // );
+      const contactRes = await fetch(
+        "https://sandbox.crm.com/backoffice/v1/contacts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            contact_type: "PERSON",
+            first_name: form.first_name,
+            middle_name: form.middle_name,
+            last_name: form.last_name,
+            email_address: form.email_address,
+            phones: [
+              {
+                phone_type: "MOBILE",
+                country_code: "TTO",
+                number: form.phone,
+                is_primary: true,
+              },
+            ],
+            addresses: [
+              {
+                address_type: "HOME",
+                address_line_1: form.address_line_1,
+                address_line_2: form.address_line_2,
+                town_city: form.town_city,
+                country_code: "TTO",
+                is_primary: true,
+              },
+            ],
+          }),
+        }
+      );
 
-      // if (!contactRes.ok) throw new Error(await contactRes.text());
-      // const contact = await contactRes.json();
+      if (!contactRes.ok) throw new Error(await contactRes.text());
+      const contact = await contactRes.json();
 
       // 2️⃣ Upload files directly to CRM (FormData)
       if (files.length > 0) {
@@ -96,19 +96,18 @@ export default function Contact({ token, onCompleted, onCancel }) {
           formData.append("file_id",crypto.randomUUID())
           formData.append("url", file); // 👈 most CRMs expect "file"
           formData.append("description", file.name);
-    alert(JSON.stringify(formData))
-
-          // const fileRes = await fetch(
-          //   `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
-          //   {
-          //     method: "POST",
-          //     headers: {
-          //        "Content-Type": "application/json",
-          //       Authorization: `Bearer ${token}`, 
-          //     },
-          //     body: formData,
-          //   }
-          // );
+          alert(JSON.stringify(formData))
+          const fileRes = await fetch(
+            `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+            {
+              method: "POST",
+              headers: {
+                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, 
+              },
+              body: formData,
+            }
+          );
 
           if (!fileRes.ok) {
             throw new Error(await fileRes.text());
