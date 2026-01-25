@@ -3,7 +3,8 @@ import React, { useState } from "react";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-function Attachments({ token, contactId, onCompleted }) {
+
+export default function Attachments({ token, contactId, onCompleted }) {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
 
