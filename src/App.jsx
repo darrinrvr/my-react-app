@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ContactForm from "./ContactForm";
-
+import Attachments from "./Attachments"
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 
 const CRM_ORIGIN = "https://sandbox.crm.com";
@@ -8,6 +8,7 @@ const CRM_ORIGIN = "https://sandbox.crm.com";
 export default function App() {
   const [token, setToken] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showAttachment,setAttachment]=useState(false)
 
   // === 1️⃣ Listen for CRM messages (access_token) ===
   useEffect(() => {
@@ -43,13 +44,25 @@ export default function App() {
         </button>
       )}
 
+  {!showAttachment && (
+        <button onClick={() => setAttachment(true)}>
+          Add Attachment
+        </button>
+      )}
       {showForm && token && (
         <ContactForm
+          token={token}
+          onCompleted={() => setShowForm(true)}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
+         {/* {showAttachment && token && (
+        <Attachments
           token={token}
           onCompleted={() => setShowForm(false)}
           onCancel={() => setShowForm(false)}
         />
-      )}
+      )} */}
 
       {!token && showForm && (
         <div style={{ marginTop: "20px" }}>Waiting for CRM authorization...</div>

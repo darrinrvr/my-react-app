@@ -84,49 +84,49 @@ export default function Contact({ token, onCompleted, onCancel }) {
         }
       );
 
-      if (!contactRes.ok) throw new Error(await contactRes.text());
-      const contact = await contactRes.json();
+    //   if (!contactRes.ok) throw new Error(await contactRes.text());
+    //   const contact = await contactRes.json();
 
-      // 2️⃣ Upload files directly to CRM (FormData)
-      if (files.length > 0) {
-        setUploading(true);
+    //   // 2️⃣ Upload files directly to CRM (FormData)
+    //   if (files.length > 0) {
+    //     setUploading(true);
 
-        for (const file of files) {
-          const formData = new FormData();
-          formData.append("file_id",crypto.randomUUID())
-          formData.append("url", file); // 👈 most CRMs expect "file"
-          formData.append("description", file.name);
-          alert(JSON.stringify(formData))
-          const fileRes = await fetch(
-            `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
-            {
-              method: "POST",
-              headers: {
-                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, 
-              },
-              body: formData,
-            }
-          );
+    //     for (const file of files) {
+    //       const formData = new FormData();
+    //       formData.append("file_id",crypto.randomUUID())
+    //       formData.append("url", file); // 👈 most CRMs expect "file"
+    //       formData.append("description", file.name);
+    //       alert(JSON.stringify())
+    //       const fileRes = await fetch(
+    //         `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+    //         {
+    //           method: "POST",
+    //           headers: {
+    //              "Content-Type": "application/json",
+    //             Authorization: `Bearer ${token}`, 
+    //           },
+    //           body: formData,
+    //         }
+    //       );
 
-          if (!fileRes.ok) {
-            throw new Error(await fileRes.text());
-          }
-        }
+    //       if (!fileRes.ok) {
+    //         throw new Error(await fileRes.text());
+    //       }
+    //     }
 
-        setUploading(false);
-      }
+    //     setUploading(false);
+    //   }
 
-      // 3️⃣ Notify CRM
-      window.top.postMessage(
-        JSON.stringify({ signature: SIGNATURE, message: "COMPLETED" }),
-        CRM_ORIGIN
-      );
+    //   // 3️⃣ Notify CRM
+    //   window.top.postMessage(
+    //     JSON.stringify({ signature: SIGNATURE, message: "COMPLETED" }),
+    //     CRM_ORIGIN
+    //   );
 
-      onCompleted?.();
-    } catch (err) {
-      console.error(err);
-      alert("Submission failed:\n" + err.message);
+    //   onCompleted?.();
+    // } catch (err) {
+    //   console.error(err);
+    //   alert("Submission failed:\n" + err.message);
     } finally {
       setUploading(false);
       setLoading(false);
