@@ -20,7 +20,7 @@ export default function Invoices({token})
         
         const data = await response.json();
         setPostData(data);
-        alert(JSON.stringify(PostData))
+      
       };
     fetchPost();
 
