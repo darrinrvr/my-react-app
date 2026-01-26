@@ -72,7 +72,7 @@ export default function App() {
           
         />
       )}
-{showAttachment && token && (
+{showInvoices && token && (
         <Invoices
           token={token}
         />

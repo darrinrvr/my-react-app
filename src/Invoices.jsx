@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 
 export default function Invoices({token})
 {
-  const [PostData,setPostData]=useState();
+  const [PostData,setPostData]=useState([]);
 
     useEffect(()=>
     {
