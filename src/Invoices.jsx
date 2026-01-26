@@ -25,9 +25,9 @@ export default function Invoices({token})
  } )
      
  return
- {
+ (
     <div>
        <h1>Hello</h1>
     </div>
- }
+ )
 }
