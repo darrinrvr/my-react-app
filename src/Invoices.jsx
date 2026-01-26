@@ -26,7 +26,7 @@ export default function Invoices({token})
 
 
 
- } );
+ }, [token] );
 
      function postalert()
     {
