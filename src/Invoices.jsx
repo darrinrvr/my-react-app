@@ -1,0 +1,33 @@
+import React, { useState } from "react";
+
+export default function Invoices({token})
+{
+  const [PostData,showPostData]=useState();
+
+    useEffect(()=>
+    {
+     const fetchPost = async () => {
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v1/invoices`,
+            {
+          method: 'GET', // Or 'POST', 'PUT', etc.
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Setting the Authorization header
+          },
+        });
+
+        
+        const data = await response.json();
+        setPostData(data);
+        alert(JSON.stringify(PostData))
+      };
+    fetchPost();
+ } )
+     
+ return
+ {
+    <div>
+       <h1>Hello</h1>
+    </div>
+ }
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ContactForm from "./ContactForm";
 import Attachments from "./Attachments"
+import Invoices from "./Invoices";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 
 const CRM_ORIGIN = "https://sandbox.crm.com";
@@ -9,7 +10,7 @@ export default function App() {
   const [token, setToken] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showAttachment,setAttachment]=useState(false)
-
+  const [showInvoices,setInvoices]=useState(false)
   // === 1️⃣ Listen for CRM messages (access_token) ===
   useEffect(() => {
     const handler = (event) => {
@@ -49,6 +50,13 @@ export default function App() {
           Add Attachment
         </button>
       )}
+
+ {!showInvoices && (
+        <button onClick={() => setInvoices(true)}>
+          Invoices
+        </button>
+      )}
+
       {showForm && token && (
         <ContactForm
           token={token}
@@ -64,6 +72,12 @@ export default function App() {
           
         />
       )}
+{showAttachment && token && (
+        <Invoices
+          token={token}
+        />
+      )}
+
 
       {!token && showForm && (
         <div style={{ marginTop: "20px" }}>Waiting for CRM authorization...</div>
