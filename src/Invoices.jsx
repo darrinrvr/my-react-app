@@ -12,7 +12,7 @@ export default function Invoices({token})
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
-            "Content-Type": "application/json",
+            "Accept": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
@@ -26,7 +26,7 @@ export default function Invoices({token})
 
 
 
- }, [PostData] );
+ }, [] );
 
      function postalert()
     {
