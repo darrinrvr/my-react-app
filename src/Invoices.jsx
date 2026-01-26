@@ -2,7 +2,13 @@ import React, { useState,useEffect } from "react";
 
 export default function Invoices({token})
 {
-  const [PostData,setPostData]=useState([]);
+     return
+ (
+    <>
+       <h1>Hello</h1>
+    </>
+ );
+  //const [PostData,setPostData]=useState([]);
 
 //     useEffect(()=>
 //     {
@@ -24,10 +30,5 @@ export default function Invoices({token})
 //     fetchPost();
 //  } );
      
- return
- (
-    <div>
-       <h1>Hello</h1>
-    </div>
- );
+
 }
