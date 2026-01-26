@@ -8,7 +8,7 @@ export default function Invoices({token})
     useEffect(()=>
     {
      const fetchPost = async () => {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/ditto`,
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v1/invoices`,
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
