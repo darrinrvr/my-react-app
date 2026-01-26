@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 export default function Invoices({token})
 {
-  const [PostData,showPostData]=useState();
+  const [PostData,setPostData]=useState();
 
     useEffect(()=>
     {
