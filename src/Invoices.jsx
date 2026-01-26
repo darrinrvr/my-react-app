@@ -8,7 +8,7 @@ export default function Invoices({token})
     useEffect(()=>
     {
      const fetchPost = async () => {
-        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/contacts`,
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/invoices`,
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
@@ -40,6 +40,13 @@ export default function Invoices({token})
        <h1>Hello</h1>
        <button onClick={handleClick}>CLICK ME</button>
        <button onClick={postalert}>CLICK ME</button>
+
+       <ul>
+      {PostData.map((fruit, index) => (
+        // A unique key is essential for each item
+        <li key={index}>{fruit}</li>
+      ))}
+    </ul>
     </>
  );
 
