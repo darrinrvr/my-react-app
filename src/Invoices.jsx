@@ -12,8 +12,8 @@ export default function Invoices({token})
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
-            "Accept": "application/json",
-            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`, // Setting the Authorization header
           },
         });
 
@@ -26,7 +26,7 @@ export default function Invoices({token})
 
 
 
- }, [] );
+ }, [PostData] );
 
      function postalert()
     {
