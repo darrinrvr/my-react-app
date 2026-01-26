@@ -23,11 +23,20 @@ export default function Invoices({token})
         alert(JSON.stringify(PostData))
       };
     fetchPost();
+
+    function postalert()
+    {
+        alert(JSON.stringify(PostData))
+    }
+     const handleClick = () => {
+    alert('Button clicked!');
+  };
+
  } );
           return(
     <>
        <h1>Hello</h1>
-       <button>CLICK ME</button>
+       <button onClick={handleClick}>CLICK ME</button>
     </>
  );
 
