@@ -8,7 +8,7 @@ export default function Invoices({token})
     useEffect(()=>
     {
      const fetchPost = async () => {
-        const response = await fetch(`https://sandbox.crm.com/backoffice/v1/invoices`,
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v1/invoices/130360e1-781c-41b2-9bc0-4e197e8573a0`,
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
