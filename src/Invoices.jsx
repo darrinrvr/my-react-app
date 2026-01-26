@@ -24,19 +24,22 @@ export default function Invoices({token})
       };
     fetchPost();
 
-    function postalert()
+
+
+ } );
+
+     function postalert()
     {
         alert(JSON.stringify(PostData))
     }
      const handleClick = () => {
     alert('Button clicked!');
   };
-
- } );
           return(
     <>
        <h1>Hello</h1>
        <button onClick={handleClick}>CLICK ME</button>
+       <button onClick={postalert}>CLICK ME</button>
     </>
  );
 
