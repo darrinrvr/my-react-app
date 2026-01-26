@@ -41,12 +41,10 @@ export default function Invoices({token})
        <button onClick={handleClick}>CLICK ME</button>
        <button onClick={postalert}>CLICK ME</button>
 
-       <ul>
-      {PostData.map((fruit, index) => (
-        // A unique key is essential for each item
-        <li key={index}>{fruit}</li>
-      ))}
-    </ul>
+       <div>
+        {JSON.stringify(PostData)}
+       </div>
+   
     </>
  );
 
