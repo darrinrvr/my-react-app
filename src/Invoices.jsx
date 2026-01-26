@@ -24,12 +24,11 @@ export default function Invoices({token})
       };
     fetchPost();
  } );
-     
-     return
- (
-    <div>
+          return(
+    <>
        <h1>Hello</h1>
        <button>CLICK ME</button>
-    </div>
+    </>
  );
+
 }
