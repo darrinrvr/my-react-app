@@ -13,7 +13,7 @@ export default function Invoices({token})
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Setting the Authorization header
+            Authorization: `Bearer ${token}`, // Setting the Authorization header
           },
         });
 
