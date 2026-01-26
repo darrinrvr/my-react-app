@@ -29,5 +29,5 @@ export default function Invoices({token})
     <div>
        <h1>Hello</h1>
     </div>
- )
+ );
 }
