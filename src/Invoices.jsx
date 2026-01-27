@@ -41,12 +41,12 @@ export default function Invoices({token})
        <button onClick={handleClick}>CLICK ME</button>
        <button onClick={postalert}>CLICK ME</button>
 
-       <div>
-        {PostData.forEach(invoice => {
-
-          JSON.stringify(invoice.content)
+       
+        {PostData.content.forEach(invoice => {
+<div>{JSON.stringify(invoice)}</div>
+          
         })}
-       </div>
+       
    
     </>
  );
