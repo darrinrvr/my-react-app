@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-
+import ActivityFeed from "./ActivityFeed";
 export default function Invoices({token})
 {
 
@@ -46,8 +46,9 @@ export default function Invoices({token})
   <div key={contact.id}>
     {contact.name}
     <button>{contact.id}</button>
+     <ActivityFeed contactid={contact.id} token={token} />
   </div>
-
+ 
 ))}
        
    
