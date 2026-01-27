@@ -42,10 +42,11 @@ export default function Invoices({token})
        <button onClick={postalert}>CLICK ME</button>
 
        
-        {PostData?.content?.map(invoice => {
-<div>{JSON.stringify(invoice)}</div>
-          
-        })}
+{PostData?.content?.map(invoice => (
+  <div key={invoice.id}>
+    {JSON.stringify(invoice)}
+  </div>
+))}
        
    
     </>
