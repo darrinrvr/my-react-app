@@ -44,7 +44,7 @@ export default function Invoices({token})
        
 {PostData?.content?.map(invoice => (
   <div key={invoice.id}>
-    {JSON.stringify(invoice)}
+    {invoice.contact}
   </div>
 ))}
        
