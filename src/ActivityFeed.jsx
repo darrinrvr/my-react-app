@@ -1,13 +1,13 @@
 import React, { useState,useEffect } from "react";
 
-export default ActivityFeed({contactid,token})
+export default function ActivityFeed({contactid,token})
 {
 const [PostData,setPostData]=useState([]);
 
     useEffect(()=>
     {
      const fetchPost = async () => {
-        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/contacts/${contactid}/activity_feed`,
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/contacts/${contactid}/activity_feed?activity_type=INVOICE`,
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
@@ -25,7 +25,7 @@ const [PostData,setPostData]=useState([]);
 
 
 
- }, [PostData] );
+ }, [PostData,contactid] );
 
  return(
     <>
