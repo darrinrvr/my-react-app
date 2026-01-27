@@ -29,7 +29,7 @@ const [PostData,setPostData]=useState([]);
 
  return(
     <>
-       {PostData?.content?.map(()=>{
+       {PostData?.content?.map(contact=>{
          <div key={contact.number}>
     INVOICE
     <button>{contact.number}</button>
