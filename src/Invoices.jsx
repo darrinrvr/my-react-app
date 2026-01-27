@@ -8,7 +8,7 @@ export default function Invoices({token})
     useEffect(()=>
     {
      const fetchPost = async () => {
-        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/invoices`,
+        const response = await fetch(`https://sandbox.crm.com/backoffice/v2/contacts`,
             {
           method: 'GET', // Or 'POST', 'PUT', etc.
           headers: {
@@ -42,10 +42,12 @@ export default function Invoices({token})
        <button onClick={postalert}>CLICK ME</button>
 
        
-{PostData?.content?.map(invoice => (
-  <div key={invoice.id}>
-    {invoice.contact.name}
+{PostData?.content?.map(contact => (
+  <div key={contact.id}>
+    {contact.name}
+    <button>{contact.id}</button>
   </div>
+
 ))}
        
    
