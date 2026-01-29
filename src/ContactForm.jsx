@@ -9,7 +9,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
   const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE']
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [contact_types,setcontact_types]=useState(ctype[0])
+  const [contact_types,setcontact_types]=useState(ctype)
    const [classifications,setclassifications]=useState(['HFC BUNDLE','FTTH BUNDLE','CORPORATE','FTTH INTERNET','HFC INTERNET','ANALOG','TV ONLY','IP TV ONLY'])
 
   const[payment_terms,set_payment_terms]=useState(['NET -1','DUE IMMEDIATELY','NET 1','NET 7','NET 14','NET 30','NET 40','NET 60'])
