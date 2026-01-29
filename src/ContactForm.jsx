@@ -4,13 +4,15 @@ const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
 export default function Contact({ token, onCompleted, onCancel }) {
+
+  const smodels=['RETAIL','WHOLESALE','ZERO PRICE']
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [contact_types,setcontact_types]=useState(['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'])
    const [classifications,setclassifications]=useState(['HFC BUNDLE','FTTH BUNDLE','CORPORATE','FTTH INTERNET','HFC INTERNET','ANALOG','TV ONLY','IP TV ONLY'])
 
   const[payment_terms,set_payment_terms]=useState(['NET -1','DUE IMMEDIATELY','NET 1','NET 7','NET 14','NET 30','NET 40','NET 60'])
-  const [sales_model,set_sales_model]=useState(['RETAIL','WHOLESALE','ZERO PRICE'])
+  const [sales_model,set_sales_model]=useState(smodels[0])
   
   const [form, setForm] = useState({
     first_name: "",
@@ -226,8 +228,8 @@ export default function Contact({ token, onCompleted, onCancel }) {
     <div>
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
-        {sales_model?.map((sm,index)=>{
-          <option key={index} value={sm}>{sm}</option>
+        {sales_model?.map((sm)=>{
+          <option key={sm} value={sm}>{sm}</option>
         })
         }
   </select>
