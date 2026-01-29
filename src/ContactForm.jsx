@@ -71,8 +71,30 @@ const [identification2_types,set_identification2_types]=useState(identification_
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) return alert("Waiting for CRM authorization");
-   
-    setLoading(true);
+    if(form.selected_ct=="")
+    {
+      return alert("Please Select A Contact Type")
+    }
+    if(form.selected_sm=="")
+    {
+      return alert("Please Select A Sales Model")
+    }
+     if(form.identification_type_1=="")
+    {
+      return alert("Please Select An Identification Type 1")
+    }
+     if(form.identification_type_2=="")
+    {
+      return alert("Please Select An Identification Type 2")
+    }
+    if(form.selected_classification=="")
+    {
+   return alert("Please Select A Classification")
+    }
+  
+
+
+      setLoading(true);
     const body=JSON.stringify({
             contact_type: "PERSON",
             first_name: form.first_name.toUpperCase(),
@@ -107,10 +129,11 @@ const [identification2_types,set_identification2_types]=useState(identification_
     {
       name: "AR001",
       is_primary: true,
-      credit_limit: form.creditlimit,
+      //credit_limit: form.creditlimit,
       currency_code: "TTO",
       classification_id: form.selected_classification, //id needs to be placed here
-      payment_terms_id: form.selected_pt //id needs to be placed here
+      //payment_terms_id: form.selected_pt id needs to be placed here
+      
     }
   ],
    custom_fields: [
