@@ -154,7 +154,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
       <h3>Create Contact</h3>
       <div>
         <label>CONTACT TYPE</label>
-        <select name="selected_ct" value={form.selected_ct} onChange={handleChange}>
+        <select name="selected_ct"  onChange={handleChange}>
         {contact_types.map((types,i) =>(
            <option key={i} value={types}>{types}</option>
         ))}
@@ -178,7 +178,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
       </div>
       <div>
         <div>PHONE NUMBER</div>
-      <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
+      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
       </div>
       <div>
       <label>ADDRESS LINE 1</label>
