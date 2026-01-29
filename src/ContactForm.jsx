@@ -6,9 +6,10 @@ const CRM_ORIGIN = "https://sandbox.crm.com";
 export default function Contact({ token, onCompleted, onCancel }) {
 
   const smodels=['RETAIL','WHOLESALE','ZERO PRICE']
+  const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE']
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [contact_types,setcontact_types]=useState(['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'])
+  const [contact_types,setcontact_types]=useState(ctype[0])
    const [classifications,setclassifications]=useState(['HFC BUNDLE','FTTH BUNDLE','CORPORATE','FTTH INTERNET','HFC INTERNET','ANALOG','TV ONLY','IP TV ONLY'])
 
   const[payment_terms,set_payment_terms]=useState(['NET -1','DUE IMMEDIATELY','NET 1','NET 7','NET 14','NET 30','NET 40','NET 60'])
@@ -153,7 +154,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
       <h3>Create Contact</h3>
       <div>
         <label>CONTACT TYPE</label>
-        <select name="selected_ct" onChange={handleChange}>
+        <select name="selected_ct" value={ctype} onChange={handleChange}>
           {contact_types?.map(types=>{
             <option value={types}>{types}</option>
           })
@@ -206,10 +207,10 @@ export default function Contact({ token, onCompleted, onCancel }) {
   <div>
     <label>CLASSIFICATION</label>
   <select name="selected_classification" onChange={handleChange}>
-    {classifications.map(classification=>{
+    {/* {classifications.map(classification=>{
       <option  value={classification}>{classification}</option>
     })
-     }
+     } */}
   </select>
   </div>
   <div>
@@ -219,19 +220,19 @@ export default function Contact({ token, onCompleted, onCancel }) {
   <div>
    <label>PAYMENT TERMS</label>
    <select name="selected_pt" onChange={handleChange}>
-        {payment_terms?.map(pt=>{
+        {/* {payment_terms?.map(pt=>{
           <option key={index} value={pt}>{pt}</option>
         })
-        }
+        } */}
   </select>
   </div>
     <div>
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
-        {sales_model?.map(sm=>{
+        {/* {sales_model?.map(sm=>{
           <option value={sm}>{sm}</option>
         })
-        }
+        } */}
   </select>
   </div>
 </div>
