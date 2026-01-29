@@ -154,14 +154,14 @@ export default function Contact({ token, onCompleted, onCancel }) {
       <h3>Create Contact</h3>
       <div>
         <label>CONTACT TYPE</label>
-        <select name="selected_ct" onChange={handleChange}>
+        {/* <select name="selected_ct" onChange={handleChange}>
         
     {contact_types.map((types) => (
   <option key={types} value={types}>
     {types}
   </option>
    ))}
-        </select>
+        </select> */}
       </div>
       <div>
        <label>FIRST NAME</label>
