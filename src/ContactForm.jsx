@@ -155,11 +155,13 @@ export default function Contact({ token, onCompleted, onCancel }) {
       <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" value={ctype} onChange={handleChange}>
-          {contact_types?.map(types=>{
-            <option value={types}>{types}</option>
-          })
+        
 
-          }
+          {contact_types.map((types) => (
+  <option key={types} value={types}>
+    {types}
+  </option>
+))}
         </select>
       </div>
       <div>
