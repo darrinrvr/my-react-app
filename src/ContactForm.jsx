@@ -227,7 +227,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
         {sales_model?.map((sm,index)=>{
-          <option key={index} value={sm.value}>{sm.value}</option>
+          <option key={index} value={sm}>{sm}</option>
         })
         }
   </select>
