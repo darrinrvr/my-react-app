@@ -36,9 +36,20 @@ export default function Contact({ token, onCompleted, onCancel }) {
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const ctchange= (e)=>{
+     if(e.target.name=="selected_ct")
+     {
+      if(e.target.value=="EMPLOYEE")
+      {
+        setForm({ ...form, ["selected_classification"]: "FTTH BUNDLE" });
+      }
+     }
+  }
 
+  const handleChange = (e) =>{
+    setForm({ ...form, [e.target.name]: e.target.value });
+    ctchange(e)
+  }
   // ----------------------------
   // FILE PICK / DROP
   // ----------------------------
@@ -60,18 +71,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
     if (!token) return alert("Waiting for CRM authorization");
    
     setLoading(true);
-
-    try {
-      // 1️⃣ Create contact (JSON)
-      const contactRes = await fetch(
-        "https://sandbox.crm.com/backoffice/v1/contacts",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+    const body=JSON.stringify({
             contact_type: "PERSON",
             first_name: form.first_name.toUpperCase(),
             middle_name: form.middle_name.toUpperCase(),
@@ -101,46 +101,64 @@ export default function Contact({ token, onCompleted, onCancel }) {
       is_primary: true,
       credit_limit: form.creditlimit,
       currency_code: "TTO",
-      classification_id: "356215f1-8775-c949-cc18-b6da670d319a",
-      payment_terms_id: "356215f1-8775-c949-cc18-b6da670d319a"
+      classification_id: form.selected_classification, //id needs to be placed here
+      payment_terms_id: form.selected_pt //id needs to be placed here
+    }
+  ],
+   custom_fields: [
+    {
+      "key": "contact_type",
+      "value": form.selected_ct
     }
   ]
-          }),
-        }
-      );
+          });
+alert(body)
+    // try {
+    //   // 1️⃣ Create contact (JSON)
+    //   const contactRes = await fetch(
+    //     "https://sandbox.crm.com/backoffice/v1/contacts",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //       body: body,
+    //     }
+    //   );
 
-      if (!contactRes.ok) throw new Error(await contactRes.text());
-      const contact = await contactRes.json();
+    //   if (!contactRes.ok) throw new Error(await contactRes.text());
+    //   const contact = await contactRes.json();
 
-      // 2️⃣ Upload files directly to CRM (FormData)
-      if (files.length > 0) {
-        setUploading(true);
+      // // 2️⃣ Upload files directly to CRM (FormData)
+      // if (files.length > 0) {
+      //   setUploading(true);
 
-        for (const file of files) {
-          const formData = new FormData();
-          formData.append("file_id",crypto.randomUUID())
-          formData.append("url", file); // 👈 most CRMs expect "file"
-          formData.append("description", file.name);
-          alert(JSON.stringify())
-          const fileRes = await fetch(
-            `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
-            {
-              method: "POST",
-              headers: {
-                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`, 
-              },
-              body: formData,
-            }
-          );
+      //   for (const file of files) {
+      //     const formData = new FormData();
+      //     formData.append("file_id",crypto.randomUUID())
+      //     formData.append("url", file); // 👈 most CRMs expect "file"
+      //     formData.append("description", file.name);
+      //     alert(JSON.stringify())
+      //     const fileRes = await fetch(
+      //       `https://sandbox.crm.com/backoffice/v1/contacts/${contact.id}/files`,
+      //       {
+      //         method: "POST",
+      //         headers: {
+      //            "Content-Type": "application/json",
+      //           Authorization: `Bearer ${token}`, 
+      //         },
+      //         body: formData,
+      //       }
+      //     );
 
-          if (!fileRes.ok) {
-            throw new Error(await fileRes.text());
-          }
-        }
+      //     if (!fileRes.ok) {
+      //       throw new Error(await fileRes.text());
+      //     }
+      //   }
 
-        setUploading(false);
-      }
+      //   setUploading(false);
+      // }
 
       // 3️⃣ Notify CRM
       window.top.postMessage(
@@ -148,14 +166,14 @@ export default function Contact({ token, onCompleted, onCancel }) {
         CRM_ORIGIN
       );
 
-      onCompleted?.();
-    } catch (err) {
-      console.error(err);
-      alert("Submission failed:\n" + err.message);
-    } finally {
-      setUploading(false);
-      setLoading(false);
-    }
+    //   onCompleted?.();
+    // } catch (err) {
+    //   console.error(err);
+    //   alert("Submission failed:\n" + err.message);
+    // } finally {
+    //   setUploading(false);
+    //   setLoading(false);
+    // }
   };
 
   // ----------------------------
