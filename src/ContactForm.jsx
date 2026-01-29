@@ -155,7 +155,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
           {contact_types?.map((types,index)=>{
-            <option key={index} value={types.value}>{types.value}</option>
+            <option key={index} value={types}>{types}</option>
           })
 
           }
@@ -207,7 +207,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
     <label>CLASSIFICATION</label>
   <select name="selected_classification" onChange={handleChange}>
     {classifications.map((classification,index)=>{
-      <option key={index} value={classification.value}>{classification.value}</option>
+      <option key={index} value={classification}>{classification}</option>
     })
      }
   </select>
@@ -220,7 +220,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
    <label>PAYMENT TERMS</label>
    <select name="selected_pt" onChange={handleChange}>
         {payment_terms?.map((pt,index)=>{
-          <option key={index} value={pt.value}>{pt.value}</option>
+          <option key={index} value={pt}>{pt}</option>
         })
         }
   </select>
