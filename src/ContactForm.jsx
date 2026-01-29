@@ -6,7 +6,12 @@ const CRM_ORIGIN = "https://sandbox.crm.com";
 export default function Contact({ token, onCompleted, onCancel }) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [contact_types,setcontact_types]=useState(['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'])
+   const [classifications,setclassifications]=useState(['HFC BUNDLE','FTTH BUNDLE','CORPORATE','FTTH INTERNET','HFC INTERNET','ANALOG','TV ONLY','IP TV ONLY'])
 
+  const[payment_terms,set_payment_terms]=useState(['NET -1','DUE IMMEDIATELY','NET 1','NET 7','NET 14','NET 30','NET 40','NET 60'])
+  const [sales_model,set_sales_model]=useState(['RETAIL','WHOLESALE','ZERO PRICE'])
+  
   const [form, setForm] = useState({
     first_name: "",
     middle_name: "",
@@ -16,6 +21,11 @@ export default function Contact({ token, onCompleted, onCancel }) {
     address_line_1: "",
     address_line_2: "",
     town_city: "",
+    selected_ct:"",
+    selected_pt:"",
+    selected_sm:"",
+    selected_classification:"",
+    creditlimit:""
   });
 
   // ✅ Raw files (not uploaded yet)
@@ -58,9 +68,9 @@ export default function Contact({ token, onCompleted, onCancel }) {
           },
           body: JSON.stringify({
             contact_type: "PERSON",
-            first_name: form.first_name,
-            middle_name: form.middle_name,
-            last_name: form.last_name,
+            first_name: form.first_name.toUpperCase(),
+            middle_name: form.middle_name.toUpperCase(),
+            last_name: form.last_name.toUpperCase(),
             email_address: form.email_address,
             phones: [
               {
@@ -73,8 +83,8 @@ export default function Contact({ token, onCompleted, onCancel }) {
             addresses: [
               {
                 address_type: "HOME",
-                address_line_1: form.address_line_1,
-                address_line_2: form.address_line_2,
+                address_line_1: form.address_line_1.toUpperCase(),
+                address_line_2: form.address_line_2.toUpperCase(),
                 town_city: form.town_city,
                 country_code: "TTO",
                 is_primary: true,
@@ -139,17 +149,92 @@ export default function Contact({ token, onCompleted, onCancel }) {
   return (
     <form onSubmit={handleSubmit}>
       <h3>Create Contact</h3>
+      <div>
+        <label>CONTACT TYPE</label>
+        <select name="selected_ct">
+          {contact_types?.map( types=>{
+            <option value='{types}'>{types}</option>
+          })
 
+          }
+        </select>
+      </div>
+      <div>
+       <label>FIRST NAME</label>
       <input name="first_name" placeholder="First Name" onChange={handleChange} required />
+      </div>
+      <div>
+        <label>MIDDLE NAME</label>
       <input name="middle_name" placeholder="Middle Name" onChange={handleChange} />
+      </div>
+      <div>
+        <label>LAST NAME</label>
       <input name="last_name" placeholder="Last Name" onChange={handleChange} required />
+      </div>
+      <div>
+      <label>EMAIL</label>
       <input name="email_address" placeholder="Email" onChange={handleChange} required />
+      </div>
+      <div>
+        <div>PHONE NUMBER</div>
       <input name="phone" placeholder="Phone" onChange={handleChange} required />
+      </div>
+      <div>
+      <label>ADDRESS LINE 1</label>
       <input name="address_line_1" placeholder="Address Line 1" onChange={handleChange} required />
+      </div>
+      <div>
+      <label>ADDRESS LINE 2</label>
       <input name="address_line_2" placeholder="Address Line 2" onChange={handleChange} />
+      </div>
+      <div>
+        <label>TOWN/CITY</label>
       <input name="town_city" placeholder="City" onChange={handleChange} required />
+      </div>
 
-      <h4>Attachments</h4>
+
+<div>
+  <h3> ACCOUNT</h3>
+  <div>
+  <label>CURRENCY</label>
+  <select>
+    <option value="TTO">TTO</option>
+  </select>
+  </div>
+  <div>
+    <label>CLASSIFICATION</label>
+  <select name="selected_classification" onChange={handleChange}>
+    {classifications.map(classification=>{
+      <option value={classification}>{classification}</option>
+    })
+     }
+  </select>
+  </div>
+  <div>
+    <label>CREDIT LIMIT</label>
+    <input type="" name="creditlimit" placeholder="TTD 0.00" onChange={handleChange} required/>
+  </div>
+  <div>
+   <label>PAYMENT TERMS</label>
+   <select name="selected_pt" onChange={handleChange}>
+        {payment_terms?.map(pt=>{
+          <option value={pt}>{pt}</option>
+        })
+        }
+  </select>
+  </div>
+    <div>
+   <label>SALES MODEL</label>
+   <select name="selected_sm" onChange={handleChange}>
+        {sales_model?.map(sm=>{
+          <option value={sm}>{sm}</option>
+        })
+        }
+  </select>
+  </div>
+</div>
+
+{/* <h4>Attachments</h4>
 
       <div
         onDrop={handleFileDrop}
@@ -172,10 +257,10 @@ export default function Contact({ token, onCompleted, onCancel }) {
       </ul>
 
       {(loading || uploading) && <p>Processing...</p>}
-
+*/}
       <button type="submit" disabled={loading || uploading}>
         {loading ? "Submitting..." : "Submit"}
-      </button>
+      </button> 
 
       <button type="button" onClick={onCancel}>
         Cancel
