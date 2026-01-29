@@ -19,26 +19,24 @@ const [identification2_types,set_identification2_types]=useState(identification_
   const [sales_model,set_sales_model]=useState(smodels);
   
   const [form, setForm] = useState({
-    first_name: "",
-    middle_name: "",
-    last_name: "",
-    email_address: "",
-    phone: "",
-    phone_type:"",
+    company_name: "",
+    laison_first_name: "",
+    liason_last_name: "",
+    company_email_address: "",
+    liason_email_address:"",
+    company_phone: "",
+    company_phone_type:"",
+    laison_phone:"",
+    liason_phone_type:"",
     address_line_1: "",
     address_line_2: "",
     town_city: "",
     selected_ct:"",
-    selected_pt:"",
     selected_sm:"",
     selected_classification:"",
-    creditlimit:"",
-    second_phone:"",
-    second_phone_type:"",
-    identification_type_1:"",
     identification_type_2:"",
+    identification2:"",
     identification1:"",
-    identification2:""
   });
 
   // ✅ Raw files (not uploaded yet)
@@ -101,37 +99,37 @@ const [identification2_types,set_identification2_types]=useState(identification_
     {
       return alert("Please Ensure Both Forms of Identification Values Are Not The Same")
     }
-
+    
   
 
 
       setLoading(true);
     const body=JSON.stringify({
-            contact_type: "PERSON",
-            first_name: form.first_name.toUpperCase(),
-            middle_name: form.middle_name.toUpperCase(),
-            last_name: form.last_name.toUpperCase(),
-            email_address: form.email_address,
+            contact_type: "COMPANY",
+            company_name: form.company_name.toUpperCase(),
+            liason_first_name: form.liason_first_name.toUpperCase(),
+            company_email_address: form.company_email_address,
+
             phones: [
               {
-                phone_type: form.phone_type,
+                phone_type: form.company_phone_type,
                 country_code: "TTO",
-                number: form.phone,
+                number: form.company_phone_type,
                 is_primary: true,
               },
               {
-                phone_type: form.phone_type,
+                phone_type: form.liason_phone_type,
                 country_code: "TTO",
-                number: form.phone,
+                number: form.liason_phone,
                 is_primary: true,
               },
             ],
             addresses: [
               {
-                address_type: "HOME",
+                address_type: "COMPANY",
                 address_line_1: form.address_line_1.toUpperCase(),
                 address_line_2: form.address_line_2.toUpperCase(),
-                town_city: form.town_city.toUpperCase(),
+                town_city: form.town_city,
                 country_code: "TTO",
                 is_primary: true,
               },
@@ -154,18 +152,10 @@ const [identification2_types,set_identification2_types]=useState(identification_
     },
     {
       "key":"identification_type_1",
-      "value":form.identification_type_1
-    },
-    {
-      "key":"identification_type_2",
-      "value":form.identification_type_2
-    },
-     {
-      "key":"identification1",
       "value":form.identification1
     },
     {
-      "key":"identification2",
+      "key":"identification_type_2",
       "value":form.identification2
     }
   ]
@@ -240,7 +230,7 @@ alert(body)
   return (
     <form onSubmit={handleSubmit}>
       <h3>Create Contact</h3>
-      <div>
+      {/* <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
           <option value="">Select contact type</option>
@@ -249,30 +239,35 @@ alert(body)
            <option key={i} value={types}>{types}</option>
         ))}
         </select> 
+      </div> */}
+      <div>
+       <label>COMPANY NAME</label>
+      <input name="company_name" placeholder="Company Name" onChange={handleChange} required />
+      </div>
+     
+      <div>
+        <label>LIASON FIRST NAME</label>
+      <input name="liason_first_name" placeholder="Liason First Name" onChange={handleChange} required />
       </div>
       <div>
-       <label>FIRST NAME</label>
-      <input name="first_name" placeholder="First Name" onChange={handleChange} required />
+      <label>LIASON LAST NAME</label>
+      <input name="liason_last_name" placeholder="Liason Last Name" onChange={handleChange} required />
       </div>
       <div>
-        <label>MIDDLE NAME</label>
-      <input name="middle_name" placeholder="Middle Name" onChange={handleChange} />
+      <label>COMPANY EMAIL</label>
+      <input name="company_email_address" type="email" placeholder="Company Email" onChange={handleChange} required />
       </div>
       <div>
-        <label>LAST NAME</label>
-      <input name="last_name" placeholder="Last Name" onChange={handleChange} required />
+      <label>LIASON EMAIL</label>
+      <input name="liason_email_address" type="email" placeholder="Liason Email" onChange={handleChange} required />
       </div>
       <div>
-      <label>EMAIL</label>
-      <input name="email_address" type="email" placeholder="Email" onChange={handleChange} required />
-      </div>
-      <div>
-       <label>PRIMARY PHONE NUMBER</label> 
-      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
+       <label>COMPANY PHONE NUMBER</label> 
+      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="company_phone" placeholder="Company Phone" onChange={handleChange} required />
       </div>
         <div>
-        <label>ALTERNATE PHONE NUMBER</label> 
-      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
+        <label>LIASON PHONE NUMBER</label> 
+      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="liason_phone" placeholder="Liason Phone" onChange={handleChange} required />
       </div>
       <div>
       <label>ADDRESS LINE 1</label>
@@ -288,19 +283,14 @@ alert(body)
       </div>
 
       <div>
-        <label>IDENTIFICATION 1</label>
-        <select name="identification_type_1" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
-         {identification1_types.map((types,i) =>(
-                <option key={i} value={types}>{types}</option>
-         ))}
-        </select>
+        <label>LIASON IDENTIFICATION</label>
       <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
       </div>
+
        <div>
         <label>IDENTIFICATION 2</label>
         <select name="identification_type_2" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
+         <option value="">Select Identification </option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
