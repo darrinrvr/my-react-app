@@ -331,7 +331,7 @@ alert(body)
       </div>
 
 <div>
-  <h3> CREATE ACCOUNT</h3>
+  <h3>ACCOUNT</h3>
   <div>
   <label>CURRENCY</label>
   <select>

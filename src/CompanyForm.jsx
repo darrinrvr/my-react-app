@@ -238,7 +238,7 @@ alert(body)
   // ----------------------------
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Create Contact</h3>
+      <h3>CREATE {ContactType}</h3>
       {/* <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
@@ -298,6 +298,7 @@ alert(body)
       <label>LIASON EMPLOYMENT IDENTIFICATION</label>
       <div>
          <input name="liason_employment_identification" placeholder="Liason Employment Identification" onChange={handleChange} required />
+         <div></div>
          <input name="attach_emp_id" type="file" />
       </div>
      
@@ -314,13 +315,14 @@ alert(body)
         <div></div>
       <div>
         <input name="liason_personal_identification" placeholder="Liason Personal Identification" onChange={handleChange} required />
+        <div></div>
         <input name="attach_person_id" type="file"/>
       </div>
       
       </div>
 
 <div>
-  <h3> ACCOUNT</h3>
+  <h3>ACCOUNT</h3>
   <div>
   <label>CURRENCY</label>
   <select>
