@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "./Contact.css";
+import ContactType from "./ContactType";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-export default function Contact({ token, onCompleted, onCancel }) {
+export default function Contact({ token, onCompleted, onCancel,ContactType }) {
   const identification_types=["NATIONAL ID","PASSPORT","DRIVER'S PERMIT"]
   const smodels=['RETAIL','WHOLESALE','ZERO PRICE'];
   const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'];
@@ -19,6 +20,8 @@ const [identification2_types,set_identification2_types]=useState(identification_
   const [sales_model,set_sales_model]=useState(smodels);
   
   const [form, setForm] = useState({
+    department:"",
+    position:"",
     first_name: "",
     middle_name: "",
     last_name: "",
@@ -70,11 +73,8 @@ const [identification2_types,set_identification2_types]=useState(identification_
   // ----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!token) return alert("Waiting for CRM authorization");
-    if(form.selected_ct=="")
-    {
-      return alert("Please Select A Contact Type")
-    }
+    // if (!token) return alert("Waiting for CRM authorization");
+ 
        if(form.identification_type_1=="")
     {
       return alert("Please Select An Identification Type 1")
@@ -107,7 +107,8 @@ const [identification2_types,set_identification2_types]=useState(identification_
 
       setLoading(true);
     const body=JSON.stringify({
-            contact_type: "PERSON",
+            contact_type: ContactType,
+          
             first_name: form.first_name.toUpperCase(),
             middle_name: form.middle_name.toUpperCase(),
             last_name: form.last_name.toUpperCase(),
@@ -162,11 +163,19 @@ const [identification2_types,set_identification2_types]=useState(identification_
     },
      {
       "key":"identification1",
-      "value":form.identification1
+      "value":form.identification1.toUpperCase()
     },
     {
       "key":"identification2",
-      "value":form.identification2
+      "value":form.identification2.toUpperCase()
+    },
+    {
+      "key":"department",
+      "value":form.department.toUpperCase()
+    },
+    {
+      "key":"position",
+      "value":form.position.toUpperCase()
     }
   ]
           });
@@ -239,8 +248,8 @@ alert(body)
   // ----------------------------
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Create Contact</h3>
-      <div>
+      <h3>CREATE {ContactType}</h3>
+      {/* <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
           <option value="">Select contact type</option>
@@ -249,6 +258,14 @@ alert(body)
            <option key={i} value={types}>{types}</option>
         ))}
         </select> 
+      </div> */}
+      <div>
+       <label>DEPARTMENT</label>
+      <input name="department" placeholder="Department" onChange={handleChange} required />
+      </div>
+       <div>
+       <label>POSITION</label>
+      <input name="position" placeholder="Position" onChange={handleChange} required />
       </div>
       <div>
        <label>FIRST NAME</label>
@@ -286,30 +303,35 @@ alert(body)
         <label>TOWN/CITY</label>
       <input name="town_city" placeholder="City" onChange={handleChange} required />
       </div>
-
-      <div>
+{/* IDENTIFICATION */}
+     <div>
         <label>IDENTIFICATION 1</label>
         <select name="identification_type_1" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
+         <option value="">Select Identification Type 1</option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
+      
       <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+       <input name="attachmentid1" type="file"/>
       </div>
        <div>
         <label>IDENTIFICATION 2</label>
         <select name="identification_type_2" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
+         <option value="">Select Identification Type 2</option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
+        <div></div>
       <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
+     
+     <input name="attachmentid2" type="file"/>
       </div>
 
 <div>
-  <h3> Create Account</h3>
+  <h3> CREATE ACCOUNT</h3>
   <div>
   <label>CURRENCY</label>
   <select>

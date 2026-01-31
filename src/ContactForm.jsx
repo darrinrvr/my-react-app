@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import "./Contact.css";
-
+import ContactType from "./ContactType";
+import OtherForm from "./OtherForm";
+import CompanyForm from "./CompanyForm";
+import EmployeeForm from "./EmployeeForm";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
@@ -45,9 +48,12 @@ const [identification2_types,set_identification2_types]=useState(identification_
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
-  const ctchange= (e)=>{
- 
-  }
+const ctchange = (value) => {
+  setForm(prev => ({
+    ...prev,
+    selected_ct: value
+  }));
+};
 
   const handleChange = (e) =>{
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -71,7 +77,7 @@ const [identification2_types,set_identification2_types]=useState(identification_
   // ----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!token) return alert("Waiting for CRM authorization");
+    // if (!token) return alert("Waiting for CRM authorization");
     if(form.selected_ct=="")
     {
       return alert("Please Select A Contact Type")
@@ -240,9 +246,36 @@ alert(body)
   // ----------------------------
   return (
     <>
-<ContactType/>
-    <form onSubmit={handleSubmit}>
-      <h3>Create {ContactType}</h3>
+    <ContactType sendcontacttype={ctchange}/>
+
+ {form.selected_ct === "PERSON" && (
+  <OtherForm
+    token={token}
+    onCompleted={onCompleted}
+    onCancel={onCancel}
+    ContactType={form.selected_ct}
+  />
+)}
+ {form.selected_ct === "COMPANY" ? (
+  <CompanyForm
+    token={token}
+    onCompleted={onCompleted}
+    onCancel={onCancel}
+    ContactType={form.selected_ct}
+  />
+):null}
+ {form.selected_ct === "EMPLOYEE" ? (
+  <EmployeeForm
+    token={token}
+    onCompleted={onCompleted}
+    onCancel={onCancel}
+    ContactType={form.selected_ct}
+  />
+):null}
+ 
+
+    {/* <form onSubmit={handleSubmit}>
+      <h3>Create {form.selected_ct}</h3>
       <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
@@ -293,13 +326,16 @@ alert(body)
       <div>
         <label>IDENTIFICATION 1</label>
         <select name="identification_type_1" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
+         <option value="">Select Identification Type 1</option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
-      <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
-      </div>
+        <div></div>
+        <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+        </div>
+      
+      
        <div>
         <label>IDENTIFICATION 2</label>
         <select name="identification_type_2" onChange={handleChange}>
@@ -308,6 +344,7 @@ alert(body)
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
+        <div></div>
       <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
       </div>
 
@@ -343,7 +380,7 @@ alert(body)
         ))}
   </select>
   </div> */}
-    <div>
+    {/* <div>
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
     <option value="">Select Sales Model</option>
@@ -353,7 +390,7 @@ alert(body)
         ))}
   </select>
   </div>
-</div>
+</div> */}
 
 {/* <h4>Attachments</h4>
 
@@ -378,7 +415,7 @@ alert(body)
       </ul>
 
       {(loading || uploading) && <p>Processing...</p>}
-*/}
+
       <button type="submit" disabled={loading || uploading}>
         {loading ? "Submitting..." : "Submit"}
       </button> 
@@ -386,7 +423,7 @@ alert(body)
       <button type="button" onClick={onCancel}>
         Cancel
       </button>
-    </form>
+    </form> */}
     </>
   );
 }

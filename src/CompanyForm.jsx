@@ -37,7 +37,6 @@ const [identification2_types,set_identification2_types]=useState(identification_
     selected_sm:"",
     selected_classification:"",
     identification_type_2:"",
-    identification2:"",
     liason_employment_identification:"",
     liason_personal_identification:""
   });
@@ -82,7 +81,7 @@ const [identification2_types,set_identification2_types]=useState(identification_
     }
         if(form.identification_type_2=="")
     {
-      return alert("Please Select An Identification Type 2")
+      return alert("Please Select An Identification Type")
     }
     if(form.selected_sm=="")
     {
@@ -93,12 +92,9 @@ const [identification2_types,set_identification2_types]=useState(identification_
    return alert("Please Select A Classification")
     }
 
-    if(form.identification_type_1==form.identification_type_2)
-    {
-      return alert("Please Ensure Both Identification Types Are Not The Same")
-    }
+  
 
-       if(form.identification1==form.identification2)
+    if(form.liason_employment_identification==form.liason_personal_identification)
     {
       return alert("Please Ensure Both Forms of Identification Values Are Not The Same")
     }
@@ -115,13 +111,13 @@ const [identification2_types,set_identification2_types]=useState(identification_
 
             phones: [
               {
-                phone_type: form.company_phone_type,
+                phone_type: "LANDLINE",
                 country_code: "TTO",
                 number: form.company_phone,
                 is_primary: true,
               },
               {
-                phone_type: form.liason_phone_type,
+                phone_type: "MOBILE",
                 country_code: "TTO",
                 number: form.liason_phone,
                 is_primary: true,
@@ -154,17 +150,15 @@ const [identification2_types,set_identification2_types]=useState(identification_
       "value": form.selected_ct
     },
     {
-      "key":"identification_type_1",
-      "value":form.liason_employment_identification_type
+      "key":"identification1",
+      "value":form.liason_employment_identification
     },
+  
     {
       "key":"identification_type_2",
       "value":form.liason_personal_identification_type
     },
-    {
-      "key":"identification1",
-      "value":form.liason_employment_identification
-    },
+ 
     {
       "key":"identification2",
       "value":form.liason_personal_identification
