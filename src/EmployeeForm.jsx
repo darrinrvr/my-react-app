@@ -18,7 +18,7 @@ export default function Contact({ token, onCompleted, onCancel,ContactType }) {
 const [identification2_types,set_identification2_types]=useState(identification_types);
   const[payment_terms,set_payment_terms]=useState(pt);
   const [sales_model,set_sales_model]=useState(smodels);
-  
+  const [authorityswitch,setauthorityswitch]=useState(false)
   const [form, setForm] = useState({
     department:"",
     position:"",
@@ -41,14 +41,16 @@ const [identification2_types,set_identification2_types]=useState(identification_
     identification_type_1:"",
     identification_type_2:"",
     identification1:"",
-    identification2:""
+    identification2:"",
+    authorized_personnel:"",
+    authorized_personnel_phone:"",
   });
 
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
-  const ctchange= (e)=>{
- 
+   const aswitch=()=>{
+    setauthorityswitch(!authorityswitch)
   }
 
   const handleChange = (e) =>{
@@ -176,6 +178,14 @@ const [identification2_types,set_identification2_types]=useState(identification_
     {
       "key":"position",
       "value":form.position.toUpperCase()
+    },
+   {
+      "key":"authorized_personnel",
+      "value":form.authorized_personnel
+    },
+     {
+      "key":"authorized_personnel_phone",
+      "value":form.authorized_personnel_phone
     }
   ]
           });
@@ -303,6 +313,47 @@ alert(body)
         <label>TOWN/CITY</label>
       <input name="town_city" placeholder="City" onChange={handleChange} required />
       </div>
+    <div>
+     <input name="bill" placeholder="Bill" onChange={handleChange} required />
+     <div></div>
+     <input name="attachbill" type="file" required/>
+     </div>
+     
+      <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={authorityswitch}
+          onChange={aswitch}
+        />
+        
+      </label>
+    {authorityswitch && (
+       <div>
+        <input
+        type="text"
+        name="authorized_personnel"
+        placeholder="NAME OF AUTHORIZED PERSONNEL"
+        // Conditionally apply the required attribute
+        // If isRequired is true, the attribute "required" is present.
+        // If isRequired is false, the attribute is not present.
+        {...(authorityswitch ? { required: true } : {})}
+      />
+          <input
+        type="tel"
+        name="authorized_personnel_phone"
+        placeholder="NUMBER OF AUTHORIZED PERSONNEL"
+        // Conditionally apply the required attribute
+        // If isRequired is true, the attribute "required" is present.
+        // If isRequired is false, the attribute is not present.
+        {...(authorityswitch ? { required: true } : {})}
+      />
+        </div>
+    )}
+
+     </div>
+
+
 {/* IDENTIFICATION */}
      <div>
         <label>IDENTIFICATION 1</label>

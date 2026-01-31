@@ -17,6 +17,7 @@ export default function OtherForm({ token, onCompleted, onCancel,ContactType }) 
 const [identification2_types,set_identification2_types]=useState(identification_types);
   const[payment_terms,set_payment_terms]=useState(pt);
   const [sales_model,set_sales_model]=useState(smodels);
+  const [authorityswitch,setauthorityswitch]=useState(false)
   
   const [form, setForm] = useState({
     first_name: "",
@@ -38,14 +39,17 @@ const [identification2_types,set_identification2_types]=useState(identification_
     identification_type_1:"",
     identification_type_2:"",
     identification1:"",
-    identification2:""
+    identification2:"",
+    authorized_personnel:"",
+    authorized_personnel_phone:"",
+
   });
 
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
-  const ctchange= (e)=>{
- 
+  const aswitch=()=>{
+    setauthorityswitch(!authorityswitch)
   }
 
   const handleChange = (e) =>{
@@ -172,6 +176,14 @@ const [identification2_types,set_identification2_types]=useState(identification_
     {
       "key":"identification2",
       "value":form.identification2
+    },
+    {
+      "key":"authorized_personnel",
+      "value":form.authorized_personnel
+    },
+     {
+      "key":"authorized_personnel_phone",
+      "value":form.authorized_personnel_phone
     }
   ]
           });
@@ -283,6 +295,46 @@ alert(body)
       <input name="town_city" placeholder="City" onChange={handleChange} required />
       </div>
 
+     <div>
+     <input name="bill" placeholder="Bill" onChange={handleChange} required />
+     <div></div>
+     <input name="attachbill" type="file" required/>
+     </div>
+     
+      <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={authorityswitch}
+          onChange={aswitch}
+        />
+        
+      </label>
+    {authorityswitch && (
+       <div>
+        <input
+        type="text"
+        name="authorized_personnel"
+        placeholder="NAME OF AUTHORIZED PERSONNEL"
+        // Conditionally apply the required attribute
+        // If isRequired is true, the attribute "required" is present.
+        // If isRequired is false, the attribute is not present.
+        {...(authorityswitch ? { required: true } : {})}
+      />
+          <input
+        type="tel"
+        name="authorized_personnel_phone"
+        placeholder="NUMBER OF AUTHORIZED PERSONNEL"
+        // Conditionally apply the required attribute
+        // If isRequired is true, the attribute "required" is present.
+        // If isRequired is false, the attribute is not present.
+        {...(authorityswitch ? { required: true } : {})}
+      />
+        </div>
+    )}
+
+     </div>
+
       <div>
         <label>IDENTIFICATION 1</label>
         <select name="identification_type_1" onChange={handleChange}>
@@ -294,7 +346,7 @@ alert(body)
         <div></div>
       <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
       <div></div>
-     <input name="attachmentid2" type="file"/>
+     <input name="attachmentid1" type="file" required/>
       </div>
        <div>
         <label>IDENTIFICATION 2</label>
@@ -307,8 +359,10 @@ alert(body)
         <div></div>
       <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
      <div></div>
-     <input name="attachmentid2" type="file"/>
+     <input name="attachmentid2" type="file" required/>
       </div>
+
+   
 
 <div>
   <h3> Create Account</h3>
