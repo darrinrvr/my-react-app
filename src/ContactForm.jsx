@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Contact.css";
+
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
@@ -238,8 +239,10 @@ alert(body)
   // RENDER
   // ----------------------------
   return (
+    <>
+<ContactType/>
     <form onSubmit={handleSubmit}>
-      <h3>Create Contact</h3>
+      <h3>Create {ContactType}</h3>
       <div>
         <label>CONTACT TYPE</label>
         <select name="selected_ct" onChange={handleChange}>
@@ -384,5 +387,6 @@ alert(body)
         Cancel
       </button>
     </form>
+    </>
   );
 }

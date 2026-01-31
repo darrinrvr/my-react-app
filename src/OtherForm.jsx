@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import "./Contact.css";
-import ContactType from "./ContactType";
-import OtherForm from "./OtherForm";
-import CompanyForm from "./CompanyForm";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-export default function Contact({ token, onCompleted, onCancel }) {
+export default function OtherForm({ token, onCompleted, onCancel,ContactType }) {
   const identification_types=["NATIONAL ID","PASSPORT","DRIVER'S PERMIT"]
   const smodels=['RETAIL','WHOLESALE','ZERO PRICE'];
   const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'];
@@ -47,12 +44,9 @@ const [identification2_types,set_identification2_types]=useState(identification_
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
-const ctchange = (value) => {
-  setForm(prev => ({
-    ...prev,
-    selected_ct: value
-  }));
-};
+  const ctchange= (e)=>{
+ 
+  }
 
   const handleChange = (e) =>{
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -77,9 +71,14 @@ const ctchange = (value) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // if (!token) return alert("Waiting for CRM authorization");
-    if(form.selected_ct=="")
+    // if(form.selected_ct=="")
+    // {
+    //   return alert("Please Select A Contact Type")
+    // }
+
+    if(form.second_phone==form.phone)
     {
-      return alert("Please Select A Contact Type")
+        return alert("Please Ensure Both Phone Numbers Are Not The Same")
     }
        if(form.identification_type_1=="")
     {
@@ -89,14 +88,7 @@ const ctchange = (value) => {
     {
       return alert("Please Select An Identification Type 2")
     }
-    if(form.selected_sm=="")
-    {
-      return alert("Please Select A Sales Model")
-    }
-    if(form.selected_classification=="")
-    {
-   return alert("Please Select A Classification")
-    }
+ 
 
     if(form.identification_type_1==form.identification_type_2)
     {
@@ -107,13 +99,20 @@ const ctchange = (value) => {
     {
       return alert("Please Ensure Both Forms of Identification Values Are Not The Same")
     }
-
+  if(form.selected_classification=="")
+    {
+   return alert("Please Select A Classification")
+    }
+     if(form.selected_sm=="")
+    {
+      return alert("Please Select A Sales Model")
+    }
   
 
 
       setLoading(true);
     const body=JSON.stringify({
-            contact_type: "PERSON",
+            contact_type: ContactType,
             first_name: form.first_name.toUpperCase(),
             middle_name: form.middle_name.toUpperCase(),
             last_name: form.last_name.toUpperCase(),
@@ -128,7 +127,7 @@ const ctchange = (value) => {
               {
                 phone_type: form.phone_type,
                 country_code: "TTO",
-                number: form.phone,
+                number: form.second_phone,
                 is_primary: true,
               },
             ],
@@ -244,47 +243,9 @@ alert(body)
   // RENDER
   // ----------------------------
   return (
-    <>
-    <ContactType sendcontacttype={ctchange}/>
-
- {form.selected_ct === "PERSON" && (
-  <OtherForm
-    token={token}
-    onCompleted={onCompleted}
-    onCancel={onCancel}
-    ContactType={form.selected_ct}
-  />
-)}
- {form.selected_ct === "COMPANY" ? (
-  <CompanyForm
-    token={token}
-    onCompleted={onCompleted}
-    onCancel={onCancel}
-    ContactType={form.selected_ct}
-  />
-):null}
- {form.selected_ct === "EMPLOYEE" ? (
-  <CompanyForm
-    token={token}
-    onCompleted={onCompleted}
-    onCancel={onCancel}
-    ContactType={form.selected_ct}
-  />
-):null}
- 
-
-    {/* <form onSubmit={handleSubmit}>
-      <h3>Create {form.selected_ct}</h3>
-      <div>
-        <label>CONTACT TYPE</label>
-        <select name="selected_ct" onChange={handleChange}>
-          <option value="">Select contact type</option>
-
-        {contact_types.map((types,i) =>(
-           <option key={i} value={types}>{types}</option>
-        ))}
-        </select> 
-      </div>
+    <form onSubmit={handleSubmit}>
+      <h3>CREATE {ContactType}</h3>
+   
       <div>
        <label>FIRST NAME</label>
       <input name="first_name" placeholder="First Name" onChange={handleChange} required />
@@ -307,7 +268,7 @@ alert(body)
       </div>
         <div>
         <label>ALTERNATE PHONE NUMBER</label> 
-      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
+      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="second_phone" placeholder="Alternative Phone" onChange={handleChange} required />
       </div>
       <div>
       <label>ADDRESS LINE 1</label>
@@ -331,20 +292,20 @@ alert(body)
          ))}
         </select>
         <div></div>
-        <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
-        </div>
-      
-      
+      <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+      </div>
        <div>
         <label>IDENTIFICATION 2</label>
         <select name="identification_type_2" onChange={handleChange}>
-         <option value="">Select Identification 1</option>
+         <option value="">Select Identification Type 2</option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
         <div></div>
       <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
+     <div></div>
+     <input name="attachmentid2" type="file"/>
       </div>
 
 <div>
@@ -379,7 +340,7 @@ alert(body)
         ))}
   </select>
   </div> */}
-    {/* <div>
+    <div>
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
     <option value="">Select Sales Model</option>
@@ -389,7 +350,7 @@ alert(body)
         ))}
   </select>
   </div>
-</div> */}
+</div>
 
 {/* <h4>Attachments</h4>
 
@@ -414,7 +375,7 @@ alert(body)
       </ul>
 
       {(loading || uploading) && <p>Processing...</p>}
-
+*/}
       <button type="submit" disabled={loading || uploading}>
         {loading ? "Submitting..." : "Submit"}
       </button> 
@@ -422,7 +383,6 @@ alert(body)
       <button type="button" onClick={onCancel}>
         Cancel
       </button>
-    </form> */}
-    </>
+    </form>
   );
 }

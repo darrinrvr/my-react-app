@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
-export default function Contact({ token, onCompleted, onCancel }) {
+export default function CompanyForm({ token, onCompleted, onCancel,ContactType }) {
   const identification_types=["NATIONAL ID","PASSPORT","DRIVER'S PERMIT"]
   const smodels=['RETAIL','WHOLESALE','ZERO PRICE'];
   const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'];
@@ -19,24 +19,27 @@ const [identification2_types,set_identification2_types]=useState(identification_
   const [sales_model,set_sales_model]=useState(smodels);
   
   const [form, setForm] = useState({
+    selected_ct:"",
     company_name: "",
     laison_first_name: "",
     liason_last_name: "",
     company_email_address: "",
     liason_email_address:"",
     company_phone: "",
+    ext_phone:"",
     company_phone_type:"",
     laison_phone:"",
     liason_phone_type:"",
     address_line_1: "",
     address_line_2: "",
     town_city: "",
-    selected_ct:"",
+   
     selected_sm:"",
     selected_classification:"",
     identification_type_2:"",
     identification2:"",
-    identification1:"",
+    liason_employment_identification:"",
+    liason_personal_identification:""
   });
 
   // ✅ Raw files (not uploaded yet)
@@ -68,11 +71,11 @@ const [identification2_types,set_identification2_types]=useState(identification_
   // ----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!token) return alert("Waiting for CRM authorization");
-    if(form.selected_ct=="")
-    {
-      return alert("Please Select A Contact Type")
-    }
+    // if (!token) return alert("Waiting for CRM authorization");
+    // if(form.selected_ct=="")
+    // {
+    //   return alert("Please Select A Contact Type")
+    // }
        if(form.identification_type_1=="")
     {
       return alert("Please Select An Identification Type 1")
@@ -105,7 +108,7 @@ const [identification2_types,set_identification2_types]=useState(identification_
 
       setLoading(true);
     const body=JSON.stringify({
-            contact_type: "COMPANY",
+            contact_type: ContactType,
             company_name: form.company_name.toUpperCase(),
             liason_first_name: form.liason_first_name.toUpperCase(),
             company_email_address: form.company_email_address,
@@ -114,7 +117,7 @@ const [identification2_types,set_identification2_types]=useState(identification_
               {
                 phone_type: form.company_phone_type,
                 country_code: "TTO",
-                number: form.company_phone_type,
+                number: form.company_phone,
                 is_primary: true,
               },
               {
@@ -126,7 +129,7 @@ const [identification2_types,set_identification2_types]=useState(identification_
             ],
             addresses: [
               {
-                address_type: "COMPANY",
+                address_type: "BUSINESS",
                 address_line_1: form.address_line_1.toUpperCase(),
                 address_line_2: form.address_line_2.toUpperCase(),
                 town_city: form.town_city,
@@ -152,11 +155,23 @@ const [identification2_types,set_identification2_types]=useState(identification_
     },
     {
       "key":"identification_type_1",
-      "value":form.identification1
+      "value":form.liason_employment_identification_type
     },
     {
       "key":"identification_type_2",
-      "value":form.identification2
+      "value":form.liason_personal_identification_type
+    },
+    {
+      "key":"identification1",
+      "value":form.liason_employment_identification
+    },
+    {
+      "key":"identification2",
+      "value":form.liason_personal_identification
+    },
+    {
+      "key":"ext_phone",
+      "value":form.ext_phone
     }
   ]
           });
@@ -263,8 +278,11 @@ alert(body)
       </div>
       <div>
        <label>COMPANY PHONE NUMBER</label> 
-      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="company_phone" placeholder="Company Phone" onChange={handleChange} required />
-      </div>
+      <div style={{display: "flex"}}>
+        <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="company_phone" placeholder="Company Phone" onChange={handleChange} required />
+        <input type="tel" pattern="^([0-9]{3}|[0-9]{4}|[0-9]{5})$" name="ext_phone" placeholder="Extension" onChange={handleChange} required />
+      </div> 
+        </div>
         <div>
         <label>LIASON PHONE NUMBER</label> 
       <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="liason_phone" placeholder="Liason Phone" onChange={handleChange} required />
@@ -283,19 +301,28 @@ alert(body)
       </div>
 
       <div>
-        <label>LIASON IDENTIFICATION</label>
-      <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+      <label>LIASON EMPLOYMENT IDENTIFICATION</label>
+      <div>
+         <input name="liason_employment_identification" placeholder="Liason Employment Identification" onChange={handleChange} required />
+         <input name="attach_emp_id" type="file" />
+      </div>
+     
       </div>
 
        <div>
-        <label>IDENTIFICATION 2</label>
-        <select name="identification_type_2" onChange={handleChange}>
+        <label>LIASON PERSONAL IDENTIFICATION</label>
+        <select name="liason_personal_identification_type" onChange={handleChange}>
          <option value="">Select Identification </option>
          {identification1_types.map((types,i) =>(
                 <option key={i} value={types}>{types}</option>
          ))}
         </select>
-      <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
+        <div></div>
+      <div>
+        <input name="liason_personal_identification" placeholder="Liason Personal Identification" onChange={handleChange} required />
+        <input name="attach_person_id" type="file"/>
+      </div>
+      
       </div>
 
 <div>

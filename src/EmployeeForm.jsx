@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-
+import "./Contact.css";
 const SIGNATURE = "916ee52c-1d16-4eb7-aff1-247ee72fe204";
 const CRM_ORIGIN = "https://sandbox.crm.com";
 
 export default function Contact({ token, onCompleted, onCancel }) {
-
+  const identification_types=["NATIONAL ID","PASSPORT","DRIVER'S PERMIT"]
   const smodels=['RETAIL','WHOLESALE','ZERO PRICE'];
   const ctype=['PERSON','COMPANY','DIA','SPECIAL','EMPLOYEE'];
   const classi=['HFC BUNDLE','FTTH BUNDLE','CORPORATE','FTTH INTERNET','HFC INTERNET','ANALOG','TV ONLY','IP TV ONLY'];
@@ -13,7 +13,8 @@ export default function Contact({ token, onCompleted, onCancel }) {
   const [uploading, setUploading] = useState(false);
   const [contact_types,setcontact_types]=useState(ctype);
    const [classifications,setclassifications]=useState(classi);
-
+  const [identification1_types,set_identification1_types]=useState(identification_types);
+const [identification2_types,set_identification2_types]=useState(identification_types);
   const[payment_terms,set_payment_terms]=useState(pt);
   const [sales_model,set_sales_model]=useState(smodels);
   
@@ -23,6 +24,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
     last_name: "",
     email_address: "",
     phone: "",
+    phone_type:"",
     address_line_1: "",
     address_line_2: "",
     town_city: "",
@@ -30,25 +32,25 @@ export default function Contact({ token, onCompleted, onCancel }) {
     selected_pt:"",
     selected_sm:"",
     selected_classification:"",
-    creditlimit:""
+    creditlimit:"",
+    second_phone:"",
+    second_phone_type:"",
+    identification_type_1:"",
+    identification_type_2:"",
+    identification1:"",
+    identification2:""
   });
 
   // ✅ Raw files (not uploaded yet)
   const [files, setFiles] = useState([]);
 
   const ctchange= (e)=>{
-     if(e.target.name=="selected_ct")
-     {
-      if(e.target.value=="EMPLOYEE")
-      {
-        setForm({ ...form, ["selected_classification"]: "FTTH BUNDLE" });
-      }
-     }
+ 
   }
 
   const handleChange = (e) =>{
     setForm({ ...form, [e.target.name]: e.target.value });
-    ctchange(e)
+  
   }
   // ----------------------------
   // FILE PICK / DROP
@@ -69,8 +71,41 @@ export default function Contact({ token, onCompleted, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) return alert("Waiting for CRM authorization");
-   
-    setLoading(true);
+    if(form.selected_ct=="")
+    {
+      return alert("Please Select A Contact Type")
+    }
+       if(form.identification_type_1=="")
+    {
+      return alert("Please Select An Identification Type 1")
+    }
+        if(form.identification_type_2=="")
+    {
+      return alert("Please Select An Identification Type 2")
+    }
+    if(form.selected_sm=="")
+    {
+      return alert("Please Select A Sales Model")
+    }
+    if(form.selected_classification=="")
+    {
+   return alert("Please Select A Classification")
+    }
+
+    if(form.identification_type_1==form.identification_type_2)
+    {
+      return alert("Please Ensure Both Identification Types Are Not The Same")
+    }
+
+       if(form.identification1==form.identification2)
+    {
+      return alert("Please Ensure Both Forms of Identification Values Are Not The Same")
+    }
+
+  
+
+
+      setLoading(true);
     const body=JSON.stringify({
             contact_type: "PERSON",
             first_name: form.first_name.toUpperCase(),
@@ -79,7 +114,13 @@ export default function Contact({ token, onCompleted, onCancel }) {
             email_address: form.email_address,
             phones: [
               {
-                phone_type: "MOBILE",
+                phone_type: form.phone_type,
+                country_code: "TTO",
+                number: form.phone,
+                is_primary: true,
+              },
+              {
+                phone_type: form.phone_type,
                 country_code: "TTO",
                 number: form.phone,
                 is_primary: true,
@@ -90,7 +131,7 @@ export default function Contact({ token, onCompleted, onCancel }) {
                 address_type: "HOME",
                 address_line_1: form.address_line_1.toUpperCase(),
                 address_line_2: form.address_line_2.toUpperCase(),
-                town_city: form.town_city,
+                town_city: form.town_city.toUpperCase(),
                 country_code: "TTO",
                 is_primary: true,
               },
@@ -99,16 +140,33 @@ export default function Contact({ token, onCompleted, onCancel }) {
     {
       name: "AR001",
       is_primary: true,
-      credit_limit: form.creditlimit,
+      //credit_limit: form.creditlimit,
       currency_code: "TTO",
       classification_id: form.selected_classification, //id needs to be placed here
-      payment_terms_id: form.selected_pt //id needs to be placed here
+      //payment_terms_id: form.selected_pt id needs to be placed here
+
     }
   ],
    custom_fields: [
     {
       "key": "contact_type",
       "value": form.selected_ct
+    },
+    {
+      "key":"identification_type_1",
+      "value":form.identification_type_1
+    },
+    {
+      "key":"identification_type_2",
+      "value":form.identification_type_2
+    },
+     {
+      "key":"identification1",
+      "value":form.identification1
+    },
+    {
+      "key":"identification2",
+      "value":form.identification2
     }
   ]
           });
@@ -209,7 +267,11 @@ alert(body)
       <input name="email_address" type="email" placeholder="Email" onChange={handleChange} required />
       </div>
       <div>
-        <div>PHONE NUMBER</div>
+       <label>PRIMARY PHONE NUMBER</label> 
+      <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
+      </div>
+        <div>
+        <label>ALTERNATE PHONE NUMBER</label> 
       <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" name="phone" placeholder="Phone" onChange={handleChange} required />
       </div>
       <div>
@@ -225,9 +287,29 @@ alert(body)
       <input name="town_city" placeholder="City" onChange={handleChange} required />
       </div>
 
+      <div>
+        <label>IDENTIFICATION 1</label>
+        <select name="identification_type_1" onChange={handleChange}>
+         <option value="">Select Identification 1</option>
+         {identification1_types.map((types,i) =>(
+                <option key={i} value={types}>{types}</option>
+         ))}
+        </select>
+      <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+      </div>
+       <div>
+        <label>IDENTIFICATION 2</label>
+        <select name="identification_type_2" onChange={handleChange}>
+         <option value="">Select Identification 1</option>
+         {identification1_types.map((types,i) =>(
+                <option key={i} value={types}>{types}</option>
+         ))}
+        </select>
+      <input name="identification2" placeholder="Identification 2" onChange={handleChange} required />
+      </div>
 
 <div>
-  <h3> ACCOUNT</h3>
+  <h3> Create Account</h3>
   <div>
   <label>CURRENCY</label>
   <select>
@@ -244,7 +326,7 @@ alert(body)
         ))}
   </select>
   </div>
-  <div>
+  {/* <div>
     <label>CREDIT LIMIT</label>
     <input type="" name="creditlimit" placeholder="TTD 0.00" onChange={handleChange} required/>
   </div>
@@ -257,7 +339,7 @@ alert(body)
            <option key={i} value={types}>{types}</option>
         ))}
   </select>
-  </div>
+  </div> */}
     <div>
    <label>SALES MODEL</label>
    <select name="selected_sm" onChange={handleChange}>
