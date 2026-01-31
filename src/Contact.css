@@ -10,12 +10,19 @@ body {
 
 /* ---------- FORM CONTAINER ---------- */
 form {
-  max-width: 900px;
+  /* max-width: 900px;
   margin: 40px auto;
   padding: 32px;
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); */
+  width: 100%;
+  min-height: 100vh;        /* fill full screen height */
+  margin: 0;               /* remove centering */
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 0;        /* optional: full-bleed look */
+  box-shadow: none;
 }
 
 /* ---------- HEADINGS ---------- */
