@@ -321,6 +321,7 @@ alert(body)
      
       <div>
       <label>
+        Authorized Letter
         <input
           type="checkbox"
           checked={authorityswitch}
@@ -348,6 +349,7 @@ alert(body)
         // If isRequired is false, the attribute is not present.
         {...(authorityswitch ? { required: true } : {})}
       />
+      
         </div>
     )}
 
