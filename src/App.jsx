@@ -39,7 +39,12 @@ export default function App() {
 
   return (
     <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-      {!showForm && (
+
+      <ContactForm 
+          token={token}
+          onCompleted={() => setShowForm(true)}
+          onCancel={() => setShowForm(false)}/>
+      {/* {!showForm && (
         <button onClick={() => setShowForm(true)}>
           Create Contact
         </button>
@@ -81,7 +86,7 @@ export default function App() {
 
       {!token && showForm && (
         <div style={{ marginTop: "20px" }}>Waiting for CRM authorization...</div>
-      )}
+      )} */}
     </div>
   );
 }

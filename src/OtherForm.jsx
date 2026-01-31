@@ -293,6 +293,8 @@ alert(body)
         </select>
         <div></div>
       <input name="identification1" placeholder="Identification 1" onChange={handleChange} required />
+      <div></div>
+     <input name="attachmentid2" type="file"/>
       </div>
        <div>
         <label>IDENTIFICATION 2</label>
