@@ -320,6 +320,11 @@ alert(body)
       </div>
       
       </div>
+       <div>
+     <input name="bill" placeholder="Bill" onChange={handleChange} required />
+     <div></div>
+     <input name="attachbill" type="file" required/>
+     </div>
 
 <div>
   <h3>ACCOUNT</h3>

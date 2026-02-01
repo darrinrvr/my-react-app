@@ -330,6 +330,7 @@ alert(body)
         // If isRequired is false, the attribute is not present.
         {...(authorityswitch ? { required: true } : {})}
       />
+      <input name="attachletter" type="file" required/>
         </div>
     )}
 

@@ -319,7 +319,7 @@ alert(body)
      <input name="attachbill" type="file" required/>
      </div>
      
-      <div>
+      <div style={{display:"left"}}>
       <label>
         Authorized Letter
         <input
@@ -349,7 +349,7 @@ alert(body)
         // If isRequired is false, the attribute is not present.
         {...(authorityswitch ? { required: true } : {})}
       />
-      
+       <input name="attachletter" type="file" required/>
         </div>
     )}
 
