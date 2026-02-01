@@ -331,6 +331,7 @@ alert(body)
       </label>
     {authorityswitch && (
        <div>
+        <label>NAME OF AUTHORIZED PERSONNEL</label>
         <input
         type="text"
         name="authorized_personnel"
@@ -340,16 +341,19 @@ alert(body)
         // If isRequired is false, the attribute is not present.
         {...(authorityswitch ? { required: true } : {})}
       />
+       <label>CONTACT NUMBER OF AUTHORIZED PERSONNEL</label>
           <input
         type="tel"
         name="authorized_personnel_phone"
         placeholder="NUMBER OF AUTHORIZED PERSONNEL"
+        pattern="[0-9]{3}[0-9]{3}[0-9]{4}"
         // Conditionally apply the required attribute
         // If isRequired is true, the attribute "required" is present.
         // If isRequired is false, the attribute is not present.
         {...(authorityswitch ? { required: true } : {})}
       />
-       <input name="attachletter" type="file" required/>
+       <input name="attachauthorized" type="file"  {...(authorityswitch ? { required: true } : {})}/>
+       
         </div>
     )}
 
